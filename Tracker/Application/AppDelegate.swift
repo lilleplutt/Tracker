@@ -4,45 +4,17 @@ import CoreData
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        
-        setUpLaunchScreen()
-        
-        window = UIWindow()
-        window?.rootViewController = ViewController()
-        window?.makeKeyAndVisible()
         return true
     }
     
-    private func setUpLaunchScreen() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        let launchViewController = UIViewController()
-        launchViewController.view.backgroundColor = UIColor(named: "YP Blue iOS")
-        
-        let launchImageView = UIImageView(image: UIImage(named: "splash_logo_image"))
-        launchImageView.translatesAutoresizingMaskIntoConstraints = false
-        launchImageView.contentMode = .scaleAspectFit
-        launchViewController.view.addSubview(launchImageView)
-        
-        launchImageView.centerXAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        launchImageView.centerYAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerYAnchor).isActive = true
-        
-        window?.rootViewController = launchViewController
-        window?.makeKeyAndVisible()
-    }
-
     // MARK: - UISceneSession Lifecycle
-
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-    }
-
+    
     // MARK: - Core Data stack
-
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "Tracker")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -52,9 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         })
         return container
     }()
-
-    // MARK: - Core Data Saving support
     
+    // MARK: - Core Data Saving support
     func saveContext () {
         let context = persistentContainer.viewContext
         if context.hasChanges {
