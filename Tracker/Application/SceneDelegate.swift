@@ -6,29 +6,33 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
-        window = UIWindow(windowScene: windowScene)
+        
+        let window = UIWindow(windowScene: windowScene)
+        self.window = window
         
         setUpLaunchScreen()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             self.showMainInterface()
         }
+        
+        window.makeKeyAndVisible()
     }
     
     private func setUpLaunchScreen() {
-        window = UIWindow(frame: UIScreen.main.bounds)
         let launchViewController = UIViewController()
-        launchViewController.view.backgroundColor = UIColor(named: "YP Blue iOS")
+        launchViewController.view.backgroundColor = UIColor(resource: .ypBlueIOS)
         
-        let launchImageView = UIImageView(image: UIImage(named: "splash_logo_image"))
+        let launchImageView = UIImageView(image: UIImage(resource: .splashLogo))
         launchImageView.translatesAutoresizingMaskIntoConstraints = false
         launchImageView.contentMode = .scaleAspectFit
         launchViewController.view.addSubview(launchImageView)
         
-        launchImageView.centerXAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerXAnchor).isActive = true
-        launchImageView.centerYAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerYAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            launchImageView.centerXAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerXAnchor),
+            launchImageView.centerYAnchor.constraint(equalTo: launchViewController.view.safeAreaLayoutGuide.centerYAnchor)
+        ])
         
         window?.rootViewController = launchViewController
-        window?.makeKeyAndVisible()
     }
     
     private func showMainInterface() {
@@ -36,4 +40,3 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.rootViewController = mainViewController
     }
 }
-
