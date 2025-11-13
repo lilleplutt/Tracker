@@ -42,16 +42,23 @@ final class TrackerViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Поиск"
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.backgroundColor = UIColor(resource: .ypGrayIOS)
+        textField.backgroundColor = UIColor(resource: .ypLightGrayIOS)
         textField.layer.cornerRadius = 10
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         let searchIcon = UIImage(resource: .mangnifyingglass)
+        let imageView = UIImageView(image: searchIcon)
+        imageView.tintColor = UIColor(resource: .ypGrayIOS)
+        imageView.contentMode = .scaleAspectFit
+        
+        let containerView = UIView()
+        containerView.addSubview(imageView)
+        containerView.frame = CGRect(x: 0, y: 0, width: 40, height: 36)
+        imageView.frame = CGRect(x: 8, y: 10, width: 15.63, height: 15.78)
+        
+        textField.leftView = containerView
         textField.leftViewMode = .always
-        textField.leftView = UIImageView(image: searchIcon)
-        textField.leftView?.tintColor = UIColor(resource: .ypGrayIOS)
-        textField.leftView?.frame = CGRect(x: 0, y: 0, width: 40, height: 20) //maybe fix
-        (textField.leftView as? UIImageView)?.contentMode = .scaleAspectFit
+        
         return textField
     }()
     
@@ -62,8 +69,8 @@ final class TrackerViewController: UIViewController {
         let currentDate = formatter.string(from: Date())
         
         button.setTitle(currentDate, for: .normal)
-        button.tintColor = UIColor(resource: .ypBlackIOS)
-        button.backgroundColor = UIColor(resource: .ypGrayIOS)
+        button.setTitleColor(.ypBlackIOS, for: .normal)
+        button.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         button.layer.cornerRadius = 8
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -101,9 +108,10 @@ final class TrackerViewController: UIViewController {
             plusButton.widthAnchor.constraint(equalToConstant: 44),
             plusButton.heightAnchor.constraint(equalToConstant: 44),
             
-            stubImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 402),
+            //stubImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 402),
             stubImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 147),
             stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40), //new
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
             
