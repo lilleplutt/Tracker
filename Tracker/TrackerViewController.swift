@@ -93,10 +93,32 @@ final class TrackerViewController: UIViewController {
     
     private func setUpConstraints() {
         NSLayoutConstraint.activate([
+            titleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 88),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
+            plusButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 45),
+            plusButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 6),
+            plusButton.widthAnchor.constraint(equalToConstant: 44),
+            plusButton.heightAnchor.constraint(equalToConstant: 44),
             
+            stubImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 402),
+            stubImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 147),
+            stubImage.widthAnchor.constraint(equalToConstant: 80),
+            stubImage.heightAnchor.constraint(equalToConstant: 80),
             
-            ])
+            stubTitleLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
+            stubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            
+            searchTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 136),
+            searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTextField.widthAnchor.constraint(equalToConstant: 343),
+            searchTextField.heightAnchor.constraint(equalToConstant: 36),
+            
+            dateButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 49),
+            dateButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            dateButton.widthAnchor.constraint(equalToConstant: 77),
+            dateButton.heightAnchor.constraint(equalToConstant: 34)
+        ])
     }
 }
 
