@@ -58,7 +58,7 @@ final class TrackerViewController: UIViewController {
     private let dateButton: UIButton = {
         let button = UIButton()
         let formatter = DateFormatter()
-        formatter.dateFormat = "dd.mm.yy"
+        formatter.dateFormat = "dd.MM.yy"
         let currentDate = formatter.string(from: Date())
         
         button.setTitle(currentDate, for: .normal)
@@ -103,14 +103,18 @@ final class TrackerViewController: UIViewController {
             
             stubImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 402),
             stubImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 147),
+            stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
             
             stubTitleLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
             stubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            stubTitleLabel.widthAnchor.constraint(equalToConstant: 343),
             
             searchTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 136),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             searchTextField.widthAnchor.constraint(equalToConstant: 343),
             searchTextField.heightAnchor.constraint(equalToConstant: 36),
             
