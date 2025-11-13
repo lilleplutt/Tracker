@@ -6,14 +6,14 @@ final class TabBarController: UITabBarController {
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
-            title: "", //add title from figma
+            title: "Трекеры",
             image: UIImage(resource: .tabBarTracker),
             selectedImage: nil
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "", //add title from figma
+            title: "Статистика", 
             image: UIImage(resource: .tabBarStatistics),
             selectedImage: nil)
         self.viewControllers = [trackerViewController, statisticsViewController]

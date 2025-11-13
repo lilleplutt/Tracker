@@ -36,7 +36,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     private func showMainInterface() {
-        let mainViewController = ViewController()
+        let mainViewController = TrackerViewController()
         window?.rootViewController = mainViewController
     }
 }
