@@ -1,8 +1,8 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-    override func awakeFromNib() {
-        super.awakeFromNib()
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
@@ -13,9 +13,11 @@ final class TabBarController: UITabBarController {
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
-            title: "Статистика", 
+            title: "Статистика",
             image: UIImage(resource: .tabBarStatistics),
-            selectedImage: nil)
+            selectedImage: nil
+        )
+        
         self.viewControllers = [trackerViewController, statisticsViewController]
     }
 }
