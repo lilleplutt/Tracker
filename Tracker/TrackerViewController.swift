@@ -53,10 +53,11 @@ final class TrackerViewController: UIViewController {
         
         let containerView = UIView()
         containerView.addSubview(imageView)
-        containerView.frame = CGRect(x: 0, y: 0, width: 40, height: 36)
+        containerView.frame = CGRect(x: 0, y: 0, width: 28, height: 36)
         imageView.frame = CGRect(x: 8, y: 10, width: 15.63, height: 15.78)
         
         textField.leftView = containerView
+        textField.leftViewMode = .always
         textField.leftViewMode = .always
         
         return textField
@@ -108,10 +109,9 @@ final class TrackerViewController: UIViewController {
             plusButton.widthAnchor.constraint(equalToConstant: 44),
             plusButton.heightAnchor.constraint(equalToConstant: 44),
             
-            //stubImage.topAnchor.constraint(equalTo: view.topAnchor, constant: 402),
             stubImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 147),
             stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40), //new
+            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
             
