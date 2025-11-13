@@ -50,7 +50,7 @@ final class TrackerViewController: UIViewController {
         textField.leftViewMode = .always
         textField.leftView = UIImageView(image: searchIcon)
         textField.leftView?.tintColor = UIColor(resource: .ypGrayIOS)
-        textField.leftView?.frame = CGRect(x: 0, y: 0, width: 40, height: 20)
+        textField.leftView?.frame = CGRect(x: 0, y: 0, width: 40, height: 20) //maybe fix
         (textField.leftView as? UIImageView)?.contentMode = .scaleAspectFit
         return textField
     }()
@@ -82,10 +82,21 @@ final class TrackerViewController: UIViewController {
     //MARK: - Private methods
     private func setUpView() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
+        
+        view.addSubview(titleLabel)
+        view.addSubview(plusButton)
+        view.addSubview(searchTextField)
+        view.addSubview(dateButton)
+        view.addSubview(stubImage)
+        view.addSubview(stubTitleLabel)
     }
     
     private func setUpConstraints() {
-        
+        NSLayoutConstraint.activate([
+            
+            
+            
+            ])
     }
 }
 
