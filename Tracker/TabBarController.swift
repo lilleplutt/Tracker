@@ -19,5 +19,11 @@ final class TabBarController: UITabBarController {
         )
         
         self.viewControllers = [trackerViewController, statisticsViewController]
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        appearance.shadowColor = .separator
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 }
