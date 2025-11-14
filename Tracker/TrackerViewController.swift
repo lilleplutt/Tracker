@@ -47,6 +47,10 @@ final class TrackerViewController: UIViewController {
         textField.backgroundColor = UIColor(resource: .ypLightGrayIOS)
         textField.layer.cornerRadius = 10
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Поиск",
+            attributes: [.foregroundColor: UIColor(resource: .ypGrayIOS)]
+        )
         
         let searchIcon = UIImage(resource: .mangnifyingglass)
         let imageView = UIImageView(image: searchIcon)
@@ -135,5 +139,3 @@ final class TrackerViewController: UIViewController {
         ])
     }
 }
-
-
