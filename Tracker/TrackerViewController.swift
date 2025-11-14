@@ -7,6 +7,7 @@ final class TrackerViewController: UIViewController {
         label.text = "Трекеры"
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
         label.textAlignment = .left
+        label.textColor = UIColor(resource: .ypBlackIOS)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -34,6 +35,7 @@ final class TrackerViewController: UIViewController {
         label.text = "Что будем отслеживать?"
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
+        label.textColor = UIColor(resource: .ypBlackIOS)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()

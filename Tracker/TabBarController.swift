@@ -7,15 +7,15 @@ final class TabBarController: UITabBarController {
         let trackerViewController = TrackerViewController()
         trackerViewController.tabBarItem = UITabBarItem(
             title: "Трекеры",
-            image: UIImage(resource: .tabBarTracker),
-            selectedImage: nil
+            image: UIImage(resource: .tabBarTracker).withRenderingMode(.alwaysTemplate),
+            selectedImage: UIImage(resource: .tabBarTracker).withRenderingMode(.alwaysTemplate)
         )
         
         let statisticsViewController = StatisticsViewController()
         statisticsViewController.tabBarItem = UITabBarItem(
             title: "Статистика",
-            image: UIImage(resource: .tabBarStatistics),
-            selectedImage: nil
+            image: UIImage(resource: .tabBarStatistics).withRenderingMode(.alwaysTemplate),
+            selectedImage: UIImage(resource: .tabBarStatistics).withRenderingMode(.alwaysTemplate)
         )
         
         self.viewControllers = [trackerViewController, statisticsViewController]
