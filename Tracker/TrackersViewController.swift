@@ -89,6 +89,7 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setUpNavigationBar()
         setUpView()
         setUpConstraints()
     }
@@ -98,6 +99,10 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     
     //MARK: - Private methods
+    private func  setUpNavigationBar() {
+        
+    }
+    
     private func setUpView() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
         
