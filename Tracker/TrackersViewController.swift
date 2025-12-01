@@ -99,17 +99,27 @@ final class TrackersViewController: UIViewController {
     private var completedTrackers: [TrackerRecord] = []
     
     //MARK: - Private methods
-    private func  setUpNavigationBar() {
+    private func setUpNavigationBar() {
         
+        let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
+        let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
+        navigationItem.leftBarButtonItem = plusBarButtonItem
+        navigationItem.rightBarButtonItem = dateBarButtonItem
+        
+        navigationItem.titleView = searchTextField
+        
+        navigationItem.title = "Трекеры"
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        NSLayoutConstraint.activate([
+            dateButton.widthAnchor.constraint(equalToConstant: 77),
+            dateButton.heightAnchor.constraint(equalToConstant: 34)
+        ])
     }
     
     private func setUpView() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
         
-        view.addSubview(titleLabel)
-        view.addSubview(plusButton)
-        view.addSubview(searchTextField)
-        view.addSubview(dateButton)
         view.addSubview(stubImage)
         view.addSubview(stubTitleLabel)
     }
