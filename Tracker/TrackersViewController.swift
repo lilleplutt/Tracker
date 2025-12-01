@@ -98,17 +98,24 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - Private methods
     private func setUpNavigationBar() {
-        
+        // Создаем кнопку с датой для правой части navigation bar
         let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
+        
+        // Создаем кнопку "+" для левой части navigation bar
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
+        
+        // Настраиваем navigationItem
         navigationItem.leftBarButtonItem = plusBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem
         
+        // Добавляем поле поиска в navigation bar
         navigationItem.titleView = searchTextField
         
+        // Устанавливаем заголовок "Трекеры" как large title
         navigationItem.title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
         
+        // Устанавливаем constraints для кнопки даты
         NSLayoutConstraint.activate([
             dateButton.widthAnchor.constraint(equalToConstant: 77),
             dateButton.heightAnchor.constraint(equalToConstant: 34)
@@ -118,6 +125,7 @@ final class TrackersViewController: UIViewController {
     private func setUpView() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
         
+        // Убираем элементы из view, так как они теперь в navigationBar
         view.addSubview(stubImage)
         view.addSubview(stubTitleLabel)
     }
@@ -133,7 +141,7 @@ final class TrackersViewController: UIViewController {
             stubTitleLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
             stubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stubTitleLabel.widthAnchor.constraint(equalToConstant: 343),
+            stubTitleLabel.widthAnchor.constraint(equalToConstant: 343)
         ])
     }
 }
