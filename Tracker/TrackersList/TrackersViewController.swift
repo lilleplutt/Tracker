@@ -138,8 +138,9 @@ final class TrackersViewController: UIViewController {
     
     @objc private func plusButtonTapped() {
         let newHabitVC = NewHabitViewController()
-        newHabitVC.modalPresentationStyle = .fullScreen
-        present(newHabitVC, animated: true)
+        let navController = UINavigationController(rootViewController: newHabitVC)
+        navController.modalPresentationStyle = .pageSheet
+        present(navController, animated: true)
     }
 }
 
