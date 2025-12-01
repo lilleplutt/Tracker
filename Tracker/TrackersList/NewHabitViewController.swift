@@ -21,6 +21,8 @@ final class NewHabitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(resource: .ypRedIOS).cgColor
+        
+        button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         return button
     }()
     
@@ -32,6 +34,8 @@ final class NewHabitViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
+        
+        button.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         button.isEnabled = false
         return button
     }()
@@ -71,6 +75,15 @@ final class NewHabitViewController: UIViewController {
             createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             createButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 34)
         ])
+    }
+    
+    //MARK: - Actions
+    @objc func didTapCancelButton() {
+        dismiss(animated: true)
+    }
+    
+    @objc func didTapCreateButton() {
+        dismiss(animated: true)
     }
     
 }
