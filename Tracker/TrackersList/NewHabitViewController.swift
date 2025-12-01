@@ -3,15 +3,29 @@ import UIKit
 final class NewHabitViewController: UIViewController {
     
     //MARK: - UI elements
-    private lazy var titleTextField: UITextField = {
+    private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
-        textField.font = .systemFont(ofSize: 17, weight: .regular)
-        textField.textColor = .ypBlackIOS
-        textField.clearButtonMode = .whileEditing
-        textField.returnKeyType = .go
-        textField.enablesReturnKeyAutomatically = true
+        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        textField.backgroundColor = UIColor(resource: .ypLightGrayIOS)
+        textField.layer.cornerRadius = 16
+        textField.layer.masksToBounds = true
+        
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
+        textField.leftView = paddingView
+        textField.leftViewMode = .always
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
+    }()
+    
+    private let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.layer.cornerRadius = 16
+        tableView.layer.masksToBounds = true
+        tableView.isScrollEnabled = false
+        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        return tableView
     }()
     
     private lazy var cancelButton: UIButton = {
@@ -24,6 +38,7 @@ final class NewHabitViewController: UIViewController {
         button.layer.cornerRadius = 16
         button.layer.borderWidth = 1
         button.layer.borderColor = UIColor(resource: .ypRedIOS).cgColor
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         return button
@@ -37,6 +52,7 @@ final class NewHabitViewController: UIViewController {
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         button.isEnabled = false
@@ -49,6 +65,7 @@ final class NewHabitViewController: UIViewController {
         
         setUpView()
         setUpConstraints()
+        setupTableView()
     }
     
     //MARK: - Private properties
@@ -59,6 +76,17 @@ final class NewHabitViewController: UIViewController {
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
+        
+        view.addSubview(titleTextField)
+        view.addSubview(tableView)
+        view.addSubview(cancelButton)
+        view.addSubview(createButton)
+    }
+    
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "optionCell")
     }
     
     private func setUpConstraints() {
@@ -67,6 +95,11 @@ final class NewHabitViewController: UIViewController {
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
             titleTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 138),
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            
+            tableView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24), //fix
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.heightAnchor.constraint(equalToConstant: 150),
             
             cancelButton.widthAnchor.constraint(equalToConstant: 166),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
@@ -88,6 +121,60 @@ final class NewHabitViewController: UIViewController {
     @objc func didTapCreateButton() {
         dismiss(animated: true)
     }
-    
 }
 
+//MARK: - Extensions
+extension NewHabitViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "optionCell", for: indexPath)
+        
+        // Настройка внешнего вида ячейки
+        cell.backgroundColor = UIColor(resource: .ypLightGrayIOS)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.textLabel?.textColor = .ypBlackIOS
+        cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.detailTextLabel?.textColor = .ypGrayIOS
+        
+        // Настройка ячеек
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "Категория"
+            cell.detailTextLabel?.text = nil // Пока не выбрано
+            cell.accessoryType = .disclosureIndicator
+        case 1:
+            cell.textLabel?.text = "Расписание"
+            cell.detailTextLabel?.text = nil // Пока не выбрано
+            cell.accessoryType = .disclosureIndicator
+        default:
+            break
+        }
+        
+        return cell
+    }
+}
+
+extension NewHabitViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 75
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.row {
+        case 0:
+            // Категория - пока заглушка
+            print("Категория tapped")
+        case 1:
+            // Расписание - открываем экран расписания
+            let scheduleVC = ScheduleViewController()
+            navigationController?.pushViewController(scheduleVC, animated: true)
+        default:
+            break
+        }
+    }
+}
