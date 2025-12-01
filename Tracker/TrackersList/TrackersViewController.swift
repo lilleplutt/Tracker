@@ -65,10 +65,11 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        setupCollectionView()
         collectionView.delegate = self
         collectionView.dataSource = self
+        collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackerCell")
         
-        setupCollectionView()
         setUpNavigationBar()
         setUpView()
         setUpConstraints()
@@ -135,4 +136,17 @@ final class TrackersViewController: UIViewController {
             stubTitleLabel.widthAnchor.constraint(equalToConstant: 343)
         ])
     }
+}
+
+// MARK: - Extensions
+extension TrackersViewController: UICollectionViewDelegate {
+    
+}
+
+extension TrackersViewController: UICollectionViewDataSource {
+
+}
+
+extension TrackersViewController: UICollectionViewDelegateFlowLayout {
+    
 }
