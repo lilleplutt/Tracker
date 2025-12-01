@@ -3,12 +3,15 @@ import UIKit
 final class NewHabitViewController: UIViewController {
     
     //MARK: - UI elements
-    private let searchController: UISearchController = {
-        let searchController = UISearchController(searchResultsController: nil)
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Введите название трекера"
-        searchController.searchBar.translatesAutoresizingMaskIntoConstraints = false
-        return searchController
+    private lazy var titleTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Введите название трекера"
+        textField.font = .systemFont(ofSize: 17, weight: .regular)
+        textField.textColor = .ypBlackIOS
+        textField.clearButtonMode = .whileEditing
+        textField.returnKeyType = .go
+        textField.enablesReturnKeyAutomatically = true
+        return textField
     }()
     
     private lazy var cancelButton: UIButton = {
@@ -60,10 +63,10 @@ final class NewHabitViewController: UIViewController {
     
     private func setUpConstraints() {
         NSLayoutConstraint.activate([
-            searchController.searchBar.widthAnchor.constraint(equalToConstant: 343),
-            searchController.searchBar.heightAnchor.constraint(equalToConstant: 75),
-            searchController.searchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 138),
-            searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleTextField.widthAnchor.constraint(equalToConstant: 343),
+            titleTextField.heightAnchor.constraint(equalToConstant: 75),
+            titleTextField.topAnchor.constraint(equalTo: view.topAnchor, constant: 138),
+            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             
             cancelButton.widthAnchor.constraint(equalToConstant: 166),
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
