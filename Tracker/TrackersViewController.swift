@@ -19,7 +19,6 @@ final class TrackersViewController: UIViewController {
             action: nil
         )
         button.tintColor = UIColor(resource: .ypBlackIOS)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -63,7 +62,6 @@ final class TrackersViewController: UIViewController {
         imageView.frame = CGRect(x: 8, y: 10, width: 15.63, height: 15.78)
         
         textField.leftView = containerView
-        textField.leftViewMode = .always
         textField.leftViewMode = .always
         
         return textField
