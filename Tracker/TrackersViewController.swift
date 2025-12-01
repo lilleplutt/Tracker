@@ -65,16 +65,35 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        setupCollectionView()
         setUpNavigationBar()
         setUpView()
         setUpConstraints()
     }
     
-    //MARK: - Properties
+    //MARK: - Public properties
+    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+    
+    //MARK: - Private properties
     private var categories: [TrackerCategory] = []
     private var completedTrackers: [TrackerRecord] = []
     
     //MARK: - Private methods
+    private func setupCollectionView() {
+        view.addSubview(collectionView)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 100),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
     private func setUpNavigationBar() {
     
         let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
