@@ -5,7 +5,8 @@ final class TabBarController: UITabBarController {
         super.viewDidLoad()
         
         let trackerViewController = TrackersViewController()
-        trackerViewController.tabBarItem = UITabBarItem(
+        let trackerNavigationController = UINavigationController(rootViewController: trackerViewController)
+        trackerNavigationController.tabBarItem = UITabBarItem(
             title: "Трекеры",
             image: UIImage(resource: .tabBarTracker).withRenderingMode(.alwaysTemplate),
             selectedImage: UIImage(resource: .tabBarTracker).withRenderingMode(.alwaysTemplate)
@@ -18,7 +19,7 @@ final class TabBarController: UITabBarController {
             selectedImage: UIImage(resource: .tabBarStatistics).withRenderingMode(.alwaysTemplate)
         )
         
-        self.viewControllers = [trackerViewController, statisticsViewController]
+        self.viewControllers = [trackerNavigationController, statisticsViewController]
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .white
