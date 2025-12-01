@@ -16,7 +16,7 @@ final class TrackersViewController: UIViewController {
         let button = UIButton.systemButton(
             with: UIImage(resource: .plusButton),
             target: TrackersViewController.self,
-            action: nil
+            action: #selector(plusButtonTapped)
         )
         button.tintColor = UIColor(resource: .ypBlackIOS)
         return button
@@ -96,7 +96,6 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setUpNavigationBar() {
-    
         let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
         navigationItem.leftBarButtonItem = plusBarButtonItem
@@ -135,6 +134,12 @@ final class TrackersViewController: UIViewController {
             stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             stubTitleLabel.widthAnchor.constraint(equalToConstant: 343)
         ])
+    }
+    
+    @objc private func plusButtonTapped() {
+        let newHabitVC = NewHabitViewController()
+        newHabitVC.modalPresentationStyle = .fullScreen
+        present(newHabitVC, animated: true)
     }
 }
 
