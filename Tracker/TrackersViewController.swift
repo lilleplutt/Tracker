@@ -39,32 +39,10 @@ final class TrackersViewController: UIViewController {
         return label
     }()
     
-    private let searchTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Поиск"
-        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.backgroundColor = UIColor(resource: .ypLightGrayIOS)
-        textField.layer.cornerRadius = 10
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "Поиск",
-            attributes: [.foregroundColor: UIColor(resource: .ypGrayIOS)]
-        )
-        
-        let searchIcon = UIImage(resource: .mangnifyingglass)
-        let imageView = UIImageView(image: searchIcon)
-        imageView.tintColor = UIColor(resource: .ypGrayIOS)
-        imageView.contentMode = .scaleAspectFit
-        
-        let containerView = UIView()
-        containerView.addSubview(imageView)
-        containerView.frame = CGRect(x: 0, y: 0, width: 28, height: 36)
-        imageView.frame = CGRect(x: 8, y: 10, width: 15.63, height: 15.78)
-        
-        textField.leftView = containerView
-        textField.leftViewMode = .always
-        
-        return textField
+    private var searchController: UISearchController = {
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchBar.placeholder = "Поиск"
+        return searchController
     }()
     
     private let dateButton: UIButton = {
@@ -98,24 +76,20 @@ final class TrackersViewController: UIViewController {
     
     //MARK: - Private methods
     private func setUpNavigationBar() {
-        // Создаем кнопку с датой для правой части navigation bar
+    
         let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
-        
-        // Создаем кнопку "+" для левой части navigation bar
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
-        
-        // Настраиваем navigationItem
         navigationItem.leftBarButtonItem = plusBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem
         
-        // Добавляем поле поиска в navigation bar
-        navigationItem.titleView = searchTextField
-        
-        // Устанавливаем заголовок "Трекеры" как large title
-        navigationItem.title = "Трекеры"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.largeTitleTextAttributes = [
+            .foregroundColor: UIColor.ypBlackIOS,
+            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
+        ]
+        navigationItem.title = "Трекеры"
+        navigationItem.searchController = searchController
         
-        // Устанавливаем constraints для кнопки даты
         NSLayoutConstraint.activate([
             dateButton.widthAnchor.constraint(equalToConstant: 77),
             dateButton.heightAnchor.constraint(equalToConstant: 34)
@@ -124,8 +98,6 @@ final class TrackersViewController: UIViewController {
     
     private func setUpView() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
-        
-        // Убираем элементы из view, так как они теперь в navigationBar
         view.addSubview(stubImage)
         view.addSubview(stubTitleLabel)
     }
