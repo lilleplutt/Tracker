@@ -11,6 +11,7 @@ final class ScheduleViewController: UIViewController {
         button.backgroundColor = .ypBlackIOS
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
+        readyButton.addTarget(self, action: #selector(didTapReadyButton), for: .touchUpInside)
         return button
     }()
     
@@ -39,5 +40,11 @@ final class ScheduleViewController: UIViewController {
             readyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
+    
+    //MARK: - Actions
+    @objc private func didTapReadyButton() {
+        navigationController?.popViewController(animated: true)
+    }
+    
 }
 
