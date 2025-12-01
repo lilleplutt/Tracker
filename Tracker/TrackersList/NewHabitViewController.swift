@@ -13,9 +13,21 @@ final class NewHabitViewController: UIViewController {
     
     private let cancelButton: UIButton = {
         let button = UIButton()
+        button.tintColor = .ypWhiteIOS // add red frame
         button.setTitle("Отменить", for: .normal)
-        button.setTitleColor(.ypRedIOS, for: .normal) //add red color
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 18, weight: .semibold)
+        button.setTitleColor(.ypRedIOS, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    private let createButton: UIButton = {
+        let button = UIButton()
+        button.tintColor = .ypGrayIOS
+        button.setTitle("Создать", for: .normal)
+        button.setTitleColor(.ypWhiteIOS, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -38,7 +50,18 @@ final class NewHabitViewController: UIViewController {
         searchController.searchBar.widthAnchor.constraint(equalToConstant: 343),
         searchController.searchBar.heightAnchor.constraint(equalToConstant: 75),
         searchController.searchBar.topAnchor.constraint(equalTo: view.topAnchor, constant: 138),
-        searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16)
+        searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+        
+        cancelButton.widthAnchor.constraint(equalToConstant: 166),
+        cancelButton.heightAnchor.constraint(equalToConstant: 60),
+        cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+        cancelButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 34),
+        
+        createButton.widthAnchor.constraint(equalToConstant: 166),
+        createButton.heightAnchor.constraint(equalToConstant: 60),
+        createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+        createButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 34)
+        
         ])
     }
         
