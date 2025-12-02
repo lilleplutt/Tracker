@@ -133,7 +133,7 @@ extension NewHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "optionCell", for: indexPath)
         
-        cell.backgroundColor = UIColor(resource: .ypLightGrayIOS)
+        cell.backgroundColor = UIColor.ypLightGrayTransparent
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.textColor = .ypBlackIOS
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)

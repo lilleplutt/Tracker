@@ -101,7 +101,7 @@ extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath)
         
-        cell.backgroundColor = UIColor(resource: .ypLightGrayIOS)
+        cell.backgroundColor = UIColor.ypLightGrayTransparent
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.textColor = .ypBlackIOS
         cell.selectionStyle = .none
