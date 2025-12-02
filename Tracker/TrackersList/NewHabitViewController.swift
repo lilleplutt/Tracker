@@ -35,7 +35,7 @@ final class NewHabitViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor(resource: .ypWhiteIOS)
+        tableView.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.isScrollEnabled = false
@@ -82,6 +82,12 @@ final class NewHabitViewController: UIViewController {
         setUpView()
         setUpConstraints()
         setupTableView()
+        setupKeyboardObservers()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        removeKeyboardObservers()
     }
     
     //MARK: - Private properties
@@ -112,12 +118,35 @@ final class NewHabitViewController: UIViewController {
         tableView.tableFooterView = UIView()
     }
     
+    private func setupKeyboardObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillShow),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillHide),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    private func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     private func setUpConstraints() {
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -24),
             
             contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
@@ -134,6 +163,7 @@ final class NewHabitViewController: UIViewController {
             tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: 150),
+            tableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -157,6 +187,30 @@ final class NewHabitViewController: UIViewController {
                 cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
             }
         }
+    }
+    
+    //MARK: - Keyboard handling
+    @objc private func dismissKeyboard() {
+        view.endEditing(true)
+    }
+    
+    @objc private func keyboardWillShow(notification: NSNotification) {
+        guard let userInfo = notification.userInfo,
+              let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect else { return }
+        
+        let keyboardHeight = keyboardFrame.height
+        scrollView.contentInset.bottom = keyboardHeight
+        scrollView.verticalScrollIndicatorInsets.bottom = keyboardHeight
+        
+        if let activeTextField = view.firstResponder as? UITextField {
+            let textFieldFrame = activeTextField.convert(activeTextField.bounds, to: scrollView)
+            scrollView.scrollRectToVisible(textFieldFrame, animated: true)
+        }
+    }
+    
+    @objc private func keyboardWillHide(notification: NSNotification) {
+        scrollView.contentInset.bottom = 0
+        scrollView.verticalScrollIndicatorInsets.bottom = 0
     }
     
     //MARK: - Actions
@@ -184,7 +238,7 @@ extension NewHabitViewController: UITableViewDataSource {
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .ypGrayIOS
         
-        if indexPath.row == 1 { // Последняя ячейка
+        if indexPath.row == 1 { 
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -238,4 +292,15 @@ extension NewHabitViewController: UITableViewDelegate {
     }
 }
 
-
+// MARK: - Extension для поиска первого респондера
+extension UIView {
+    var firstResponder: UIView? {
+        guard !isFirstResponder else { return self }
+        for subview in subviews {
+            if let firstResponder = subview.firstResponder {
+                return firstResponder
+            }
+        }
+        return nil
+    }
+}
