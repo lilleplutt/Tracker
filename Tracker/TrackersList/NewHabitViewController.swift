@@ -7,7 +7,7 @@ final class NewHabitViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.backgroundColor = UIColor(resource: .ypLightGrayIOS)
+        textField.backgroundColor = UIColor.ypLightGrayTransparent
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         
@@ -20,6 +20,7 @@ final class NewHabitViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = UIColor.ypLightGrayTransparent
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.isScrollEnabled = false
@@ -174,3 +175,5 @@ extension NewHabitViewController: UITableViewDelegate {
         }
     }
 }
+
+

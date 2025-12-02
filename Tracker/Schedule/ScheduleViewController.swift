@@ -5,6 +5,7 @@ final class ScheduleViewController: UIViewController {
     //MARK: - UI elements
     private let tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = UIColor.ypLightGrayTransparent
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
