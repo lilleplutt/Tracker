@@ -20,6 +20,7 @@ final class ScheduleViewController: UIViewController {
         button.backgroundColor = .ypBlackIOS
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -45,6 +46,9 @@ final class ScheduleViewController: UIViewController {
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
+        
+        view.addSubview(tableView)
+        view.addSubview(readyButton)
     }
     
     private func setupTableView() {

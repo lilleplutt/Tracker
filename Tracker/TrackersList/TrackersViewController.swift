@@ -2,20 +2,10 @@ import UIKit
 
 final class TrackersViewController: UIViewController {
     //MARK: - UI elements
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Трекеры"
-        label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        label.textAlignment = .left
-        label.textColor = UIColor(resource: .ypBlackIOS)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    private let plusButton: UIButton = {
+    private lazy var plusButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(resource: .plusButton),
-            target: TrackersViewController.self,
+            target: self,
             action: #selector(plusButtonTapped)
         )
         button.tintColor = UIColor(resource: .ypBlackIOS)
