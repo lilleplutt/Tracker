@@ -132,22 +132,20 @@ extension NewHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "optionCell", for: indexPath)
         
-        // Настройка внешнего вида ячейки
         cell.backgroundColor = UIColor(resource: .ypLightGrayIOS)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.textColor = .ypBlackIOS
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .ypGrayIOS
         
-        // Настройка ячеек
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = nil // Пока не выбрано
+            cell.detailTextLabel?.text = nil
             cell.accessoryType = .disclosureIndicator
         case 1:
             cell.textLabel?.text = "Расписание"
-            cell.detailTextLabel?.text = nil // Пока не выбрано
+            cell.detailTextLabel?.text = nil
             cell.accessoryType = .disclosureIndicator
         default:
             break
@@ -167,10 +165,8 @@ extension NewHabitViewController: UITableViewDelegate {
         
         switch indexPath.row {
         case 0:
-            // Категория - пока заглушка
             print("Категория tapped")
         case 1:
-            // Расписание - открываем экран расписания
             let scheduleVC = ScheduleViewController()
             navigationController?.pushViewController(scheduleVC, animated: true)
         default:
