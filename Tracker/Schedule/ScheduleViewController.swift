@@ -59,6 +59,7 @@ final class ScheduleViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "dayCell")
+        tableView.tableFooterView = UIView()
     }
     
     private func setupReadyButton() {
@@ -112,14 +113,16 @@ extension ScheduleViewController: UITableViewDataSource {
         
         let daySwitch = UISwitch()
         daySwitch.onTintColor = .ypBlueIOS
-        daySwitch.tag = indexPath.row 
+        daySwitch.tag = indexPath.row
         daySwitch.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
         daySwitch.isOn = selectedDays.contains(indexPath.row)
         
         cell.accessoryView = daySwitch
         cell.textLabel?.text = weekDays[indexPath.row]
         
-        if indexPath.row == weekDays.count - 1 {
+        if indexPath.row == 0 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else if indexPath.row == weekDays.count - 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
         } else {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)

@@ -109,6 +109,7 @@ final class NewHabitViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "optionCell")
+        tableView.tableFooterView = UIView()
     }
     
     private func setUpConstraints() {
@@ -135,16 +136,27 @@ final class NewHabitViewController: UIViewController {
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            cancelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
+            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: createButton.leadingAnchor, constant: -8),
-            cancelButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
-            cancelButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
+            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             cancelButton.widthAnchor.constraint(equalTo: createButton.widthAnchor),
             
             createButton.heightAnchor.constraint(equalToConstant: 60),
-            createButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            createButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32)
+            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
+    }
+    
+    private func updateScheduleCell() {
+        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) {
+            if selectedScheduleDays.isEmpty {
+                cell.detailTextLabel?.text = nil
+            } else {
+                let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+                let selectedDaySymbols = selectedScheduleDays.sorted().map { daySymbols[$0] }
+                cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
+            }
+        }
     }
     
     //MARK: - Actions
@@ -172,6 +184,12 @@ extension NewHabitViewController: UITableViewDataSource {
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.detailTextLabel?.textColor = .ypGrayIOS
         
+        if indexPath.row == 1 { // Последняя ячейка
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        }
+        
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Категория"
@@ -179,7 +197,13 @@ extension NewHabitViewController: UITableViewDataSource {
             cell.accessoryType = .disclosureIndicator
         case 1:
             cell.textLabel?.text = "Расписание"
-            cell.detailTextLabel?.text = nil
+            if !selectedScheduleDays.isEmpty {
+                let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+                let selectedDaySymbols = selectedScheduleDays.sorted().map { daySymbols[$0] }
+                cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
+            } else {
+                cell.detailTextLabel?.text = nil
+            }
             cell.accessoryType = .disclosureIndicator
         default:
             break
@@ -205,24 +229,11 @@ extension NewHabitViewController: UITableViewDelegate {
             scheduleVC.selectedDays = Set(selectedScheduleDays)
             scheduleVC.onScheduleSelected = { [weak self] selectedDays in
                 self?.selectedScheduleDays = selectedDays
-                self?.updateScheduleCell()
+                self?.tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
             }
-            
             navigationController?.pushViewController(scheduleVC, animated: true)
         default:
             break
-        }
-    }
-    
-    private func updateScheduleCell() {
-        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) {
-            if selectedScheduleDays.isEmpty {
-                cell.detailTextLabel?.text = nil
-            } else {
-                let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-                let selectedDaySymbols = selectedScheduleDays.map { daySymbols[$0] }
-                cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
-            }
         }
     }
 }
