@@ -5,7 +5,7 @@ final class ScheduleViewController: UIViewController {
     //MARK: - UI elements
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor.ypLightGrayTransparent
+        tableView.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
@@ -101,8 +101,8 @@ extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath)
         
-        cell.backgroundColor = UIColor.ypLightGrayTransparent
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        cell.backgroundColor = UIColor(resource: .ypBackgroundIOS)
+        cell.textLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
         cell.textLabel?.textColor = .ypBlackIOS
         cell.selectionStyle = .none
         

@@ -7,7 +7,7 @@ final class NewHabitViewController: UIViewController {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.backgroundColor = UIColor.ypLightGrayTransparent
+        textField.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         textField.layer.cornerRadius = 16
         textField.layer.masksToBounds = true
         
@@ -20,7 +20,7 @@ final class NewHabitViewController: UIViewController {
     
     private let tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor.ypLightGrayTransparent
+        tableView.backgroundColor = UIColor(resource: .ypWhiteIOS)
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.isScrollEnabled = false
@@ -92,10 +92,10 @@ final class NewHabitViewController: UIViewController {
     
     private func setUpConstraints() {
         NSLayoutConstraint.activate([
-            titleTextField.widthAnchor.constraint(equalToConstant: 343),
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
             titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
             tableView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24), //fix
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -133,7 +133,7 @@ extension NewHabitViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "optionCell", for: indexPath)
         
-        cell.backgroundColor = UIColor.ypLightGrayTransparent
+        cell.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         cell.textLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         cell.textLabel?.textColor = .ypBlackIOS
         cell.detailTextLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
