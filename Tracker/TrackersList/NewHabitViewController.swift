@@ -3,9 +3,24 @@ import UIKit
 final class NewHabitViewController: UIViewController {
     
     //MARK: - UI elements
+    private let scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    private let contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     private let titleTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Введите название трекера",
+            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGrayIOS]
+        )
         textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
         textField.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         textField.layer.cornerRadius = 16
@@ -81,8 +96,11 @@ final class NewHabitViewController: UIViewController {
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
         
-        view.addSubview(titleTextField)
-        view.addSubview(tableView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(titleTextField)
+        contentView.addSubview(tableView)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
     }
@@ -95,25 +113,37 @@ final class NewHabitViewController: UIViewController {
     
     private func setUpConstraints() {
         NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
+            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
+            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+            
             titleTextField.heightAnchor.constraint(equalToConstant: 75),
-            titleTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
-            titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
+            titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
             tableView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            tableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             tableView.heightAnchor.constraint(equalToConstant: 150),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
-            cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            cancelButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            cancelButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
             cancelButton.trailingAnchor.constraint(equalTo: createButton.leadingAnchor, constant: -8),
+            cancelButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32),
+            cancelButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16),
             cancelButton.widthAnchor.constraint(equalTo: createButton.widthAnchor),
             
             createButton.heightAnchor.constraint(equalToConstant: 60),
-            createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            createButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
+            createButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
+            createButton.topAnchor.constraint(equalTo: tableView.bottomAnchor, constant: 32)
         ])
     }
     

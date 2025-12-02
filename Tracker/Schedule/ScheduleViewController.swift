@@ -27,6 +27,8 @@ final class ScheduleViewController: UIViewController {
     
     // MARK: - Private properties
     private let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    
+    // MARK: - Public properties
     var selectedDays: Set<Int> = []
     var onScheduleSelected: (([Int]) -> Void)?
     
@@ -110,7 +112,7 @@ extension ScheduleViewController: UITableViewDataSource {
         
         let daySwitch = UISwitch()
         daySwitch.onTintColor = .ypBlueIOS
-        daySwitch.tag = indexPath.row //индекс дня
+        daySwitch.tag = indexPath.row 
         daySwitch.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
         daySwitch.isOn = selectedDays.contains(indexPath.row)
         
