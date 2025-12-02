@@ -70,6 +70,9 @@ final class NewHabitViewController: UIViewController {
     }
     
     //MARK: - Private properties
+    private var selectedScheduleDays: [Int] = []
+    
+    //MARK: - Private methods
     private func setUpView() {
         view.backgroundColor = .ypWhiteIOS
         navigationItem.title = "Новая привычка"
@@ -169,9 +172,27 @@ extension NewHabitViewController: UITableViewDelegate {
             print("Категория tapped")
         case 1:
             let scheduleVC = ScheduleViewController()
+            scheduleVC.selectedDays = Set(selectedScheduleDays)
+            scheduleVC.onScheduleSelected = { [weak self] selectedDays in
+                self?.selectedScheduleDays = selectedDays
+                self?.updateScheduleCell()
+            }
+            
             navigationController?.pushViewController(scheduleVC, animated: true)
         default:
             break
+        }
+    }
+    
+    private func updateScheduleCell() {
+        if let cell = tableView.cellForRow(at: IndexPath(row: 1, section: 0)) {
+            if selectedScheduleDays.isEmpty {
+                cell.detailTextLabel?.text = nil
+            } else {
+                let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+                let selectedDaySymbols = selectedScheduleDays.map { daySymbols[$0] }
+                cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
+            }
         }
     }
 }

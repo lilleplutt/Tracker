@@ -27,7 +27,8 @@ final class ScheduleViewController: UIViewController {
     
     // MARK: - Private properties
     private let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    private var selectedDays: Set<Int> = []
+    var selectedDays: Set<Int> = []
+    var onScheduleSelected: (([Int]) -> Void)?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -78,6 +79,7 @@ final class ScheduleViewController: UIViewController {
     
     //MARK: - Actions
     @objc private func didTapReadyButton() {
+        onScheduleSelected?(Array(selectedDays).sorted())
         navigationController?.popViewController(animated: true)
     }
     
