@@ -13,7 +13,7 @@ final class ScheduleViewController: UIViewController {
     var selectedDays: Set<Int> = []
     
     // MARK: - UI elements
-    private lazy var scheduleTableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.backgroundColor = .ypWhiteIOS
         tableView.register(ScheduleCell.self, forCellReuseIdentifier: "ScheduleCell")
@@ -54,19 +54,19 @@ final class ScheduleViewController: UIViewController {
         ]
         navigationItem.hidesBackButton = true
         
-        scheduleTableView.dataSource = self
-        scheduleTableView.delegate = self
+        tableView.dataSource = self
+        tableView.delegate = self
         
-        view.addSubview(scheduleTableView)
+        view.addSubview(tableView)
         view.addSubview(readyButton)
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            scheduleTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scheduleTableView.bottomAnchor.constraint(equalTo: readyButton.topAnchor, constant: -16),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: readyButton.topAnchor, constant: -16),
             
             readyButton.heightAnchor.constraint(equalToConstant: 60),
             readyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
