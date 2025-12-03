@@ -292,7 +292,6 @@ extension NewHabitViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - Extension для поиска первого респондера
 extension UIView {
     var firstResponder: UIView? {
         guard !isFirstResponder else { return self }

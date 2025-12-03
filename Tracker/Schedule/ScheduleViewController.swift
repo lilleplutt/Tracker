@@ -3,12 +3,13 @@ import UIKit
 final class ScheduleViewController: UIViewController {
     
     //MARK: - UI elements
-    private let tableView: UITableView = {
+    private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = UIColor(resource: .ypBackgroundIOS)
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorColor = UIColor.ypGrayIOS.withAlphaComponent(0.3) //new
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -50,6 +51,7 @@ final class ScheduleViewController: UIViewController {
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
+        navigationItem.hidesBackButton = true
         
         view.addSubview(tableView)
         view.addSubview(readyButton)
@@ -59,7 +61,7 @@ final class ScheduleViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "dayCell")
-        tableView.tableFooterView = UIView()
+        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude)) // Фиксируем пустое место
     }
     
     private func setupReadyButton() {
@@ -120,13 +122,11 @@ extension ScheduleViewController: UITableViewDataSource {
         cell.accessoryView = daySwitch
         cell.textLabel?.text = weekDays[indexPath.row]
         
-        if indexPath.row == 0 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        } else if indexPath.row == weekDays.count - 1 {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-        } else {
-            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        }
+        if indexPath.row == weekDays.count - 1 {
+                    cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
+                } else {
+                    cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+                }
         
         return cell
     }
@@ -136,5 +136,13 @@ extension ScheduleViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 75
     }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+            // Убедимся, что сепараторы отображаются правильно
+            if indexPath.row == 0 {
+                // У первой ячейки тоже должен быть сепаратор снизу
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            }
+        }
 }
 
