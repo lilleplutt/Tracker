@@ -1,15 +1,24 @@
 import UIKit
 
+// MARK: - Protocols
+protocol ScheduleViewControllerDelegate: AnyObject {
+    func getConfiguredSchedule(_ selectedDays: [Int])
+}
+
 final class ScheduleViewController: UIViewController {
     
-    //MARK: - UI elements
-    private lazy var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.backgroundColor = UIColor(resource: .ypBackgroundIOS)
-        tableView.layer.cornerRadius = 16
-        tableView.layer.masksToBounds = true
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        tableView.separatorColor = UIColor.ypGrayIOS.withAlphaComponent(0.3) //new
+    // MARK: - Properties
+    weak var delegate: ScheduleViewControllerDelegate?
+    private let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
+    var selectedDays: Set<Int> = []
+    
+    // MARK: - UI elements
+    private lazy var scheduleTableView: UITableView = {
+        let tableView = UITableView(frame: .zero, style: .grouped)
+        tableView.backgroundColor = .ypWhiteIOS
+        tableView.register(ScheduleCell.self, forCellReuseIdentifier: "ScheduleCell")
+        tableView.separatorStyle = .none
+        tableView.rowHeight = 75
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
@@ -26,26 +35,18 @@ final class ScheduleViewController: UIViewController {
         return button
     }()
     
-    // MARK: - Private properties
-    private let weekDays = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"]
-    
-    // MARK: - Public properties
-    var selectedDays: Set<Int> = []
-    var onScheduleSelected: (([Int]) -> Void)?
-    
-    //MARK: - Lifecycle
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        setUpView()
-        setUpConstraints()
-        setupTableView()
-        setupReadyButton()
+        setupUI()
+        setupConstraints()
+        setupActions()
     }
     
-    //MARK: - Private methods
-    private func setUpView() {
+    // MARK: - Private methods
+    private func setupUI() {
         view.backgroundColor = .ypWhiteIOS
+        
         navigationItem.title = "Расписание"
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.ypBlackIOS,
@@ -53,96 +54,91 @@ final class ScheduleViewController: UIViewController {
         ]
         navigationItem.hidesBackButton = true
         
-        view.addSubview(tableView)
+        scheduleTableView.dataSource = self
+        scheduleTableView.delegate = self
+        
+        view.addSubview(scheduleTableView)
         view.addSubview(readyButton)
     }
     
-    private func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "dayCell")
-        tableView.tableFooterView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: CGFloat.leastNormalMagnitude)) // Фиксируем пустое место
-    }
-    
-    private func setupReadyButton() {
-        readyButton.addTarget(self, action: #selector(didTapReadyButton), for: .touchUpInside)
-    }
-    
-    private func setUpConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: readyButton.topAnchor, constant: -24),
+            scheduleTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            scheduleTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            scheduleTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            scheduleTableView.bottomAnchor.constraint(equalTo: readyButton.topAnchor, constant: -16),
             
             readyButton.heightAnchor.constraint(equalToConstant: 60),
-            readyButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            readyButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             readyButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             readyButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
     
-    //MARK: - Actions
-    @objc private func didTapReadyButton() {
-        onScheduleSelected?(Array(selectedDays).sorted())
-        navigationController?.popViewController(animated: true)
+    private func setupActions() {
+        readyButton.addTarget(self, action: #selector(readyButtonDidTap), for: .touchUpInside)
     }
     
-    @objc private func switchChanged(_ sender: UISwitch) {
-        let dayIndex = sender.tag
-        
-        if sender.isOn {
-            selectedDays.insert(dayIndex)
-        } else {
-            selectedDays.remove(dayIndex)
-        }
+    // MARK: - Actions
+    @objc private func readyButtonDidTap() {
+        delegate?.getConfiguredSchedule(Array(selectedDays).sorted())
+        navigationController?.popViewController(animated: true)
     }
 }
 
-// MARK: - Extensions
+//MARK: - Extensions
 extension ScheduleViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return weekDays.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "dayCell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "ScheduleCell", for: indexPath) as? ScheduleCell else {
+            return UITableViewCell()
+        }
         
-        cell.backgroundColor = UIColor(resource: .ypBackgroundIOS)
-        cell.textLabel?.font = UIFont.systemFont(ofSize: 16, weight: .regular)
-        cell.textLabel?.textColor = .ypBlackIOS
-        cell.selectionStyle = .none
+        let dayName = weekDays[indexPath.row]
+        let isFirst = indexPath.row == 0
+        let isLast = indexPath.row == weekDays.count - 1
         
-        let daySwitch = UISwitch()
-        daySwitch.onTintColor = .ypBlueIOS
-        daySwitch.tag = indexPath.row
-        daySwitch.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
-        daySwitch.isOn = selectedDays.contains(indexPath.row)
+        cell.configure(
+            dayName: dayName,
+            isSelected: selectedDays.contains(indexPath.row),
+            isFirst: isFirst,
+            isLast: isLast
+        )
         
-        cell.accessoryView = daySwitch
-        cell.textLabel?.text = weekDays[indexPath.row]
-        
-        if indexPath.row == weekDays.count - 1 {
-                    cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: .greatestFiniteMagnitude)
-                } else {
-                    cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-                }
+        cell.onSwitchChanged = { [weak self] isOn in
+            if isOn {
+                self?.selectedDays.insert(indexPath.row)
+            } else {
+                self?.selectedDays.remove(indexPath.row)
+            }
+        }
         
         return cell
     }
 }
 
 extension ScheduleViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerView = UIView()
+        headerView.backgroundColor = .clear
+        return headerView
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            // Убедимся, что сепараторы отображаются правильно
-            if indexPath.row == 0 {
-                // У первой ячейки тоже должен быть сепаратор снизу
-                cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-            }
-        }
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let footerView = UIView()
+        footerView.backgroundColor = .clear
+        return footerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 0
+    }
 }
 

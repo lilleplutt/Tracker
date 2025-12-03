@@ -2,6 +2,11 @@ import UIKit
 
 final class NewHabitViewController: UIViewController {
     
+    //MARK: - Protocols
+    protocol ScheduleViewControllerDelegate: AnyObject {
+        func getConfiguredSchedule(_ selectedDays: [Int])
+    }
+    
     //MARK: - UI elements
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -281,14 +286,18 @@ extension NewHabitViewController: UITableViewDelegate {
         case 1:
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedDays = Set(selectedScheduleDays)
-            scheduleVC.onScheduleSelected = { [weak self] selectedDays in
-                self?.selectedScheduleDays = selectedDays
-                self?.tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
-            }
+            scheduleVC.delegate = self // Используем делегат вместо замыкания
             navigationController?.pushViewController(scheduleVC, animated: true)
         default:
             break
         }
+    }
+}
+
+extension NewHabitViewController: ScheduleViewControllerDelegate {
+    func getConfiguredSchedule(_ selectedDays: [Int]) {
+        self.selectedScheduleDays = selectedDays
+        tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
     }
 }
 
