@@ -78,14 +78,87 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            // Цветная верхняя часть
+            colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            colorView.heightAnchor.constraint(equalToConstant: 90),
             
+            // Эмодзи
+            emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
+            emojiLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            emojiLabel.widthAnchor.constraint(equalToConstant: 24),
+            emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
+            // Название
+            titleLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
+            titleLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -12),
             
+            // Счетчик дней
+            daysCountLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 16),
+            daysCountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            
+            // Кнопка
+            plusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
+            plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            plusButton.widthAnchor.constraint(equalToConstant: 34),
+            plusButton.heightAnchor.constraint(equalToConstant: 34)
         ])
     }
     
+    @objc private func plusButtonTapped() {
+            isCompleted.toggle()
+            updatePlusButton()
+            
+            // Здесь позже будем обновлять счетчик дней
+        }
+        
+        private func updatePlusButton() {
+            if isCompleted {
+                plusButton.setTitle("✓", for: .normal)
+                plusButton.backgroundColor = colorView.backgroundColor?.withAlphaComponent(0.3)
+                plusButton.tintColor = .white
+            } else {
+                plusButton.setTitle("+", for: .normal)
+                plusButton.backgroundColor = .ypBlackIOS
+                plusButton.tintColor = .white
+            }
+        }
+    
+    private func updateDaysCount(_ count: Int) {
+            let daysString: String
+            
+            switch count {
+            case 1:
+                daysString = "1 день"
+            case 2...4:
+                daysString = "\(count) дня"
+            default:
+                daysString = "\(count) дней"
+            }
+            
+            daysCountLabel.text = daysString
+        }
+    
+    // MARK: - Public methods
     func configure(with tracker: Tracker) {
-        backgroundColor = tracker.color
+        trackerId = tracker.id
+                
+                // Устанавливаем цвет
+                colorView.backgroundColor = tracker.color
+                
+                // Устанавливаем эмодзи
+                emojiLabel.text = tracker.emoji
+                
+                // Устанавливаем название
+                titleLabel.text = tracker.title
+                
+                // Устанавливаем счетчик дней
+                updateDaysCount(completedDays)
+                
+                // Обновляем кнопку
+                updatePlusButton()
     }
 }
 
