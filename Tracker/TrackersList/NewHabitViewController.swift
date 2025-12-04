@@ -11,6 +11,7 @@ final class NewHabitViewController: UIViewController {
     
     // MARK: - Properties
     private var selectedScheduleDays: [Int] = []
+    var onCreateTracker: ((Tracker) -> Void)?
     
     // MARK: - UI elements
     private let titleTextField: UITextField = {
@@ -151,6 +152,17 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
+        guard let title = titleTextField.text, !title.isEmpty else { return }
+        let schedule = selectedScheduleDays.map { Schedule(weekday: $0) }
+        let tracker = Tracker(
+            id: UUID(),
+            title: title,
+            color: .ypBlueIOS,
+            emoji: "🏃‍♂️",
+            schedule: schedule
+        )
+        
+        onCreateTracker?(tracker)
         dismiss(animated: true)
     }
 }
