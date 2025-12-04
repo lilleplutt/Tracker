@@ -130,27 +130,27 @@ final class TrackersViewController: UIViewController {
         let newHabitVC = NewHabitViewController()
         let navController = UINavigationController(rootViewController: newHabitVC)
         newHabitVC.onCreateTracker = { [weak self] tracker in
-                    self?.addNewTracker(tracker)
-                }
+            self?.addNewTracker(tracker)
+        }
         present(navController, animated: true)
     }
     
     private func addNewTracker(_ tracker: Tracker) {
-            let category = TrackerCategory(
-                title: "Важное",
-                trackers: [tracker]
-            )
-            
-            categories.append(category)
-            collectionView.reloadData()
-            updateStubVisibility()
-        }
+        let category = TrackerCategory(
+            title: "Важное",
+            trackers: [tracker]
+        )
+        
+        categories.append(category)
+        collectionView.reloadData()
+        updateStubVisibility()
+    }
     
     private func updateStubVisibility() {
-            let hasTrackers = !categories.isEmpty
-            stubImage.isHidden = hasTrackers
-            stubTitleLabel.isHidden = hasTrackers
-        }
+        let hasTrackers = !categories.isEmpty
+        stubImage.isHidden = hasTrackers
+        stubTitleLabel.isHidden = hasTrackers
+    }
 }
 
 // MARK: - Extensions
@@ -159,12 +159,26 @@ extension TrackersViewController: UICollectionViewDelegate {
 }
 
 extension TrackersViewController: UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return categories.count
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
+        guard section < categories.count else { return 0 }
+        return categories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-    
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "trackerCell",
+            for: indexPath
+        ) as? TrackersCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
+        let tracker = categories[indexPath.section].trackers[indexPath.row]
+        cell.configure(with: tracker)
+        return cell
     }
     
     
