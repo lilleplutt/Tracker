@@ -1,7 +1,8 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-    //MARK: - UI elements
+    
+    // MARK: - UI Elements
     private lazy var plusButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(resource: .plusButton),
@@ -50,42 +51,40 @@ final class TrackersViewController: UIViewController {
         return button
     }()
     
+    private lazy var collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
+    }()
     
-    //MARK: - Lifecycle
+    // MARK: - Properties
+    private var categories: [TrackerCategory] = []
+    private var completedTrackers: Set<TrackerRecord> = []
+    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupCollectionView()
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackerCell")
-        
-        setUpNavigationBar()
-        setUpView()
-        setUpConstraints()
+        setupUI()
+        setupConstraints()
+        updateStubVisibility()
     }
     
-    //MARK: - Public properties
-    let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-    
-    //MARK: - Private properties
-    private var categories: [TrackerCategory] = []
-    private var completedTrackers: [TrackerRecord] = []
-    
-    //MARK: - Private methods
-    private func setupCollectionView() {
+    // MARK: - Private Methods
+    private func setupUI() {
+        view.backgroundColor = UIColor(resource: .ypWhiteIOS)
+        
         view.addSubview(collectionView)
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(stubImage)
+        view.addSubview(stubTitleLabel)
         
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: 236),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 428),
-            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
-        ])
+        setupNavigationBar()
+        setupCollectionView()
     }
     
-    private func setUpNavigationBar() {
+    private func setupNavigationBar() {
         let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
         navigationItem.leftBarButtonItem = plusBarButtonItem
@@ -105,24 +104,30 @@ final class TrackersViewController: UIViewController {
         ])
     }
     
-    private func setUpView() {
-        view.backgroundColor = UIColor(resource: .ypWhiteIOS)
-        view.addSubview(stubImage)
-        view.addSubview(stubTitleLabel)
+    private func setupCollectionView() {
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackerCell")
+        collectionView.contentInset = UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
     }
     
-    private func setUpConstraints() {
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
-            stubImage.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 147),
+            // Collection View
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            // Stub
             stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor, constant: 40),
+            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
             
             stubTitleLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
             stubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            stubTitleLabel.widthAnchor.constraint(equalToConstant: 343)
+            stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
     
@@ -136,28 +141,64 @@ final class TrackersViewController: UIViewController {
     }
     
     private func addNewTracker(_ tracker: Tracker) {
-        let category = TrackerCategory(
-            title: "Важное",
-            trackers: [tracker]
-        )
+        if categories.isEmpty {
+            // Создаем первую категорию
+            let category = TrackerCategory(
+                title: "Важное",
+                trackers: [tracker]
+            )
+            categories.append(category)
+        } else {
+            // Добавляем к существующей категории
+            var existingCategory = categories[0]
+            var updatedTrackers = existingCategory.trackers
+            updatedTrackers.append(tracker)
+            categories[0] = TrackerCategory(
+                title: existingCategory.title,
+                trackers: updatedTrackers
+            )
+        }
         
-        categories.append(category)
         collectionView.reloadData()
         updateStubVisibility()
     }
     
     private func updateStubVisibility() {
-        let hasTrackers = !categories.isEmpty
+        let hasTrackers = !categories.isEmpty && !categories[0].trackers.isEmpty
         stubImage.isHidden = hasTrackers
         stubTitleLabel.isHidden = hasTrackers
     }
-}
-
-// MARK: - Extensions
-extension TrackersViewController: UICollectionViewDelegate {
     
+    private func getDayString(_ value: Int) -> String {
+        let mod10 = value % 10
+        let mod100 = value % 100
+        
+        let word: String = {
+            switch (mod100, mod10) {
+            case (11...14, _):
+                return "дней"
+            case (_, 1):
+                return "день"
+            case (_, 2...4):
+                return "дня"
+            default:
+                return "дней"
+            }
+        }()
+        
+        return "\(value) \(word)"
+    }
+    
+    private func isCompleted(id: UUID) -> Bool {
+        return completedTrackers.contains { $0.trackerId == id }
+    }
+    
+    private func getCurrentQuanity(id: UUID) -> Int {
+        return completedTrackers.filter { $0.trackerId == id }.count
+    }
 }
 
+// MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return categories.count
@@ -177,18 +218,21 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         
         let tracker = categories[indexPath.section].trackers[indexPath.row]
-        let completedDays = completedTrackers.filter { $0.trackerId == tracker.id }.count
-        cell.configure(with: tracker, completedDays: completedDays)
+        let isCompleted = isCompleted(id: tracker.id)
+        let quanity = getCurrentQuanity(id: tracker.id)
+        
+        cell.configure(with: tracker, isCompleted: isCompleted, quanity: quanity)
+        cell.delegate = self
         
         return cell
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let availableWidth = collectionView.frame.width - 16 * 2 - 9
+        let availableWidth = collectionView.frame.width - 32 // 16 слева + 16 справа
         let cellWidth = availableWidth / 2
-        
         return CGSize(width: cellWidth, height: 148)
     }
     
@@ -197,7 +241,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return .zero
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
@@ -205,3 +249,26 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+// MARK: - TrackersCollectionViewCellDelegate
+protocol TrackersCollectionViewCellDelegate: AnyObject {
+    func completeButtonDidTap(in cell: TrackersCollectionViewCell)
+}
+
+extension TrackersViewController: TrackersCollectionViewCellDelegate {
+    func completeButtonDidTap(in cell: TrackersCollectionViewCell) {
+        // Пока просто обновляем состояние кнопки
+        // Позже добавим логику сохранения
+        if let indexPath = collectionView.indexPath(for: cell) {
+            let tracker = categories[indexPath.section].trackers[indexPath.row]
+            let record = TrackerRecord(trackerId: tracker.id, date: Date())
+            
+            if isCompleted(id: tracker.id) {
+                completedTrackers.remove(record)
+            } else {
+                completedTrackers.insert(record)
+            }
+            
+            collectionView.reloadItems(at: [indexPath])
+        }
+    }
+}

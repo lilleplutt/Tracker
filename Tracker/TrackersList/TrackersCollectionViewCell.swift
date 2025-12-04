@@ -2,153 +2,169 @@ import UIKit
 
 final class TrackersCollectionViewCell: UICollectionViewCell {
     
-    //MARK: - UI elements
-    private let colorView: UIView = {
+    // MARK: - UI Elements
+    private lazy var cardView: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
+        view.layer.cornerRadius = 16
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .ypBlueIOS
         return view
     }()
     
-    private let emojiLabel: UILabel = {
+    private lazy var emojiLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textAlignment = .center
         label.numberOfLines = 1
-        label.backgroundColor = .emojiBackground
+        label.backgroundColor = .white.withAlphaComponent(0.3)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 12
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypWhiteIOS
         label.textAlignment = .left
-        label.numberOfLines = 0
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private let daysCountLabel: UILabel = {
+    private lazy var quanityLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
         label.textAlignment = .left
         label.numberOfLines = 1
-        label.text = "0 дней"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    private lazy var plusButton: UIButton = {
+    private lazy var completeButton: UIButton = {
         let button = UIButton()
-        let image = UIImage.addHabitButton.withRenderingMode(.alwaysTemplate)
-        button.setImage(image, for: .normal)
-        button.tintColor = .ypBlueIOS
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
+        button.layer.cornerRadius = 17
+        button.layer.masksToBounds = true
         return button
     }()
     
-    //MARK: - Properties
+    // MARK: - Properties
+    weak var delegate: TrackersCollectionViewCellDelegate?
     private var trackerId: UUID?
-    private var isCompleted = false
     
     // MARK: - Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Private methods
+    // MARK: - Private Methods
     private func setupUI() {
-        contentView.addSubview(colorView)
-        colorView.addSubview(emojiLabel)
-        colorView.addSubview(titleLabel)
-        contentView.addSubview(daysCountLabel)
-        contentView.addSubview(plusButton)
+        contentView.addSubview(cardView)
+        cardView.addSubview(emojiLabel)
+        cardView.addSubview(titleLabel)
+        contentView.addSubview(quanityLabel)
+        contentView.addSubview(completeButton)
         
-        layer.cornerRadius = 16
-        layer.masksToBounds = true
+        setupConstraints()
     }
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            colorView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
-            colorView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor),
-            colorView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
-            colorView.heightAnchor.constraint(equalToConstant: 90),
+            // Card View
+            cardView.topAnchor.constraint(equalTo: contentView.topAnchor),
+            cardView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            cardView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            cardView.heightAnchor.constraint(equalToConstant: 90),
             
-            emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
-            emojiLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
+            // Emoji
+            emojiLabel.topAnchor.constraint(equalTo: cardView.topAnchor, constant: 12),
+            emojiLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
-            titleLabel.leadingAnchor.constraint(equalTo: colorView.leadingAnchor, constant: 12),
-            titleLabel.trailingAnchor.constraint(equalTo: colorView.trailingAnchor, constant: -12),
-            titleLabel.bottomAnchor.constraint(equalTo: colorView.bottomAnchor, constant: -12),
+            // Title
+            titleLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12),
+            titleLabel.trailingAnchor.constraint(equalTo: cardView.trailingAnchor, constant: -12),
+            titleLabel.bottomAnchor.constraint(equalTo: cardView.bottomAnchor, constant: -12),
             
-            daysCountLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 16),
-            daysCountLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            // Days count
+            quanityLabel.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 16),
+            quanityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             
-            plusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
-            plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
-            plusButton.widthAnchor.constraint(equalToConstant: 34),
-            plusButton.heightAnchor.constraint(equalToConstant: 34)
+            // Button
+            completeButton.topAnchor.constraint(equalTo: cardView.bottomAnchor, constant: 8),
+            completeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            completeButton.widthAnchor.constraint(equalToConstant: 34),
+            completeButton.heightAnchor.constraint(equalToConstant: 34)
         ])
     }
     
-    @objc private func plusButtonTapped() {
-        isCompleted.toggle()
-        updatePlusButton()
-        
+    private func setupActions() {
+        completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)
     }
     
-    private func updatePlusButton() {
-        if isCompleted {
-            plusButton.setTitle("✓", for: .normal)
-            plusButton.backgroundColor = colorView.backgroundColor?.withAlphaComponent(0.3)
-            plusButton.tintColor = .white
-        } else {
-            plusButton.setTitle("+", for: .normal)
-            plusButton.backgroundColor = .ypBlackIOS
-            plusButton.tintColor = .white
-        }
+    // MARK: - Actions
+    @objc private func completeButtonTapped() {
+        delegate?.completeButtonDidTap(in: self)
     }
     
-    private func updateDaysCount(_ count: Int) {
-        let daysString: String
-        
-        switch count {
-        case 1:
-            daysString = "1 день"
-        case 2...4:
-            daysString = "\(count) дня"
-        default:
-            daysString = "\(count) дней"
-        }
-        
-        daysCountLabel.text = daysString
-    }
-    
-    // MARK: - Public methods
-    func configure(with tracker: Tracker, completedDays: Int = 0) {
+    // MARK: - Public Methods
+    func configure(with tracker: Tracker, isCompleted: Bool, quanity: Int) {
         trackerId = tracker.id
-        colorView.backgroundColor = tracker.color
-        emojiLabel.text = tracker.emoji
-        titleLabel.text = tracker.title
-        updateDaysCount(completedDays)
         
-        updatePlusButton()
+        // Настраиваем цвет карточки
+        cardView.backgroundColor = tracker.color
+        
+        // Настраиваем эмодзи
+        emojiLabel.text = tracker.emoji
+        
+        // Настраиваем название
+        titleLabel.text = tracker.title
+        
+        // Настраиваем счетчик дней
+        quanityLabel.text = getDayString(quanity)
+        
+        // Настраиваем кнопку
+        let plusImage = UIImage(resource: .addHabitButton).withRenderingMode(.alwaysTemplate)
+        let doneImage = UIImage(resource: .completeHabitButton).withRenderingMode(.alwaysTemplate)
+        
+        if isCompleted {
+            completeButton.setImage(doneImage, for: .normal)
+            completeButton.backgroundColor = tracker.color.withAlphaComponent(0.3)
+            completeButton.tintColor = .white
+        } else {
+            completeButton.setImage(plusImage, for: .normal)
+            completeButton.backgroundColor = .ypBlackIOS
+            completeButton.tintColor = tracker.color
+        }
+    }
+    
+    private func getDayString(_ value: Int) -> String {
+        let mod10 = value % 10
+        let mod100 = value % 100
+        
+        let word: String = {
+            switch (mod100, mod10) {
+            case (11...14, _):
+                return "дней"
+            case (_, 1):
+                return "день"
+            case (_, 2...4):
+                return "дня"
+            default:
+                return "дней"
+            }
+        }()
+        
+        return "\(value) \(word)"
     }
 }
-
