@@ -8,13 +8,18 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         view.layer.cornerRadius = 16
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .ypBlueIOS
         return view
     }()
     
     private let emojiLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.textAlignment = .left
+        label.font = .systemFont(ofSize: 14, weight: .medium)
+        label.textAlignment = .center
+        label.numberOfLines = 1
+        label.backgroundColor = .emojiBackground
+        label.layer.masksToBounds = true
+        label.layer.cornerRadius = 12
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -23,7 +28,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypWhiteIOS
-        label.numberOfLines = 2
+        label.textAlignment = .left
+        label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -32,19 +38,18 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
+        label.textAlignment = .left
+        label.numberOfLines = 1
         label.text = "0 дней"
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var plusButton: UIButton = {
-        let button = UIButton(type: .system)
-        button.setTitle("+", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
-        button.tintColor = .white
-        button.backgroundColor = .ypBlackIOS
-        button.layer.cornerRadius = 17
-        button.layer.masksToBounds = true
+        let button = UIButton()
+        let image = UIImage.addHabitButton.withRenderingMode(.alwaysTemplate)
+        button.setImage(image, for: .normal)
+        button.tintColor = .ypBlueIOS
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.addTarget(self, action: #selector(plusButtonTapped), for: .touchUpInside)
@@ -78,9 +83,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            colorView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor),
+            colorView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor),
+            colorView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor),
             colorView.heightAnchor.constraint(equalToConstant: 90),
             
             emojiLabel.topAnchor.constraint(equalTo: colorView.topAnchor, constant: 12),
@@ -141,7 +146,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         colorView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
-        updateDaysCount(completedDays)  
+        updateDaysCount(completedDays)
         
         updatePlusButton()
     }

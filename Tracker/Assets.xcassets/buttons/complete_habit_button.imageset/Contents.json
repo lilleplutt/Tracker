@@ -1,0 +1,23 @@
+{
+  "images" : [
+    {
+      "filename" : "Button 34x34 — копия.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "Button 34x34@3x — копия.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "Button 34x34@2x — копия.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
