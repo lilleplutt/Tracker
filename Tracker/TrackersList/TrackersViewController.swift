@@ -113,13 +113,11 @@ final class TrackersViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            // Collection View
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            // Stub
             stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
@@ -142,14 +140,12 @@ final class TrackersViewController: UIViewController {
     
     private func addNewTracker(_ tracker: Tracker) {
         if categories.isEmpty {
-            // Создаем первую категорию
             let category = TrackerCategory(
                 title: "Важное",
                 trackers: [tracker]
             )
             categories.append(category)
         } else {
-            // Добавляем к существующей категории
             var existingCategory = categories[0]
             var updatedTrackers = existingCategory.trackers
             updatedTrackers.append(tracker)
@@ -256,8 +252,6 @@ protocol TrackersCollectionViewCellDelegate: AnyObject {
 
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     func completeButtonDidTap(in cell: TrackersCollectionViewCell) {
-        // Пока просто обновляем состояние кнопки
-        // Позже добавим логику сохранения
         if let indexPath = collectionView.indexPath(for: cell) {
             let tracker = categories[indexPath.section].trackers[indexPath.row]
             let record = TrackerRecord(trackerId: tracker.id, date: Date())
