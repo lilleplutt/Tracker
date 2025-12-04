@@ -170,16 +170,24 @@ extension TrackersViewController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "trackerCell",
-            for: indexPath
-        ) as? TrackersCollectionViewCell else {
-            return UICollectionViewCell()
-        }
-        
-        let tracker = categories[indexPath.section].trackers[indexPath.row]
-        cell.configure(with: tracker)
-        return cell
-    }
+                    withReuseIdentifier: "trackerCell",
+                    for: indexPath
+                ) as? TrackersCollectionViewCell else {
+                    return UICollectionViewCell()
+                }
+                
+                // Получаем трекер
+                let tracker = categories[indexPath.section].trackers[indexPath.row]
+                
+                // Считаем выполненные дни для этого трекера
+                let completedDays = completedTrackers.filter { $0.trackerId == tracker.id }.count
+                
+                // Настраиваем ячейку
+                cell.configure(with: tracker, completedDays: completedDays)
+                
+                return cell
+            }
+    
     
     
 }
