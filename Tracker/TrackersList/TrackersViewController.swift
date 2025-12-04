@@ -55,10 +55,10 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //setupCollectionView()
-        //collectionView.delegate = self
-        //collectionView.dataSource = self
-        //collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackerCell")
+        setupCollectionView()
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(TrackersCollectionViewCell.self, forCellWithReuseIdentifier: "trackerCell")
         
         setUpNavigationBar()
         setUpView()
@@ -129,29 +129,48 @@ final class TrackersViewController: UIViewController {
     @objc private func plusButtonTapped() {
         let newHabitVC = NewHabitViewController()
         let navController = UINavigationController(rootViewController: newHabitVC)
+        newHabitVC.onCreateTracker = { [weak self] tracker in
+                    self?.addNewTracker(tracker)
+                }
         present(navController, animated: true)
     }
+    
+    private func addNewTracker(_ tracker: Tracker) {
+            let category = TrackerCategory(
+                title: "Важное",
+                trackers: [tracker]
+            )
+            
+            categories.append(category)
+            collectionView.reloadData()
+            updateStubVisibility()
+        }
+    
+    private func updateStubVisibility() {
+            let hasTrackers = !categories.isEmpty
+            stubImage.isHidden = hasTrackers
+            stubTitleLabel.isHidden = hasTrackers
+        }
 }
 
 // MARK: - Extensions
-/*
- extension TrackersViewController: UICollectionViewDelegate {
- 
- }
- 
- extension TrackersViewController: UICollectionViewDataSource {
- func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
- 
- }
- 
- func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
- <#code#>
- }
- 
- 
- }
- 
- extension TrackersViewController: UICollectionViewDelegateFlowLayout {
- 
- }
- */
+extension TrackersViewController: UICollectionViewDelegate {
+    
+}
+
+extension TrackersViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    
+    }
+    
+    
+}
+
+extension TrackersViewController: UICollectionViewDelegateFlowLayout {
+    
+}
+
