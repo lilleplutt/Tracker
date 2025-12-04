@@ -136,13 +136,13 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public methods
-    func configure(with tracker: Tracker) {
+    func configure(with tracker: Tracker, completedDays: Int = 0) {
         trackerId = tracker.id
         colorView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
-        updateDaysCount(completedDays)
-    
+        updateDaysCount(completedDays)  
+        
         updatePlusButton()
     }
 }
