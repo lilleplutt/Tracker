@@ -189,7 +189,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         let availableWidth = collectionView.frame.width - 16 * 2 - 9
         let cellWidth = availableWidth / 2
         
-        return CGSize(width: cellWidth, height: 150)
+        return CGSize(width: cellWidth, height: 148)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
@@ -197,11 +197,11 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
+        return .zero
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 16, bottom: 16, right: 16)
+        return UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
     }
 }
 
