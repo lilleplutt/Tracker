@@ -13,7 +13,7 @@ final class NewHabitViewController: UIViewController {
     private var selectedScheduleDays: [Int] = []
     var onCreateTracker: ((Tracker) -> Void)?
     
-    // MARK: - UI elements
+    // MARK: - UI Elements
     private let titleTextField: UITextField = {
         let textField = UITextField()
         textField.attributedPlaceholder = NSAttributedString(
@@ -30,6 +30,17 @@ final class NewHabitViewController: UIViewController {
         textField.leftViewMode = .always
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
+    }()
+    
+    private let errorLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        label.textColor = .ypRedIOS
+        label.text = "Ограничение 38 символов"
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
     }()
     
     private let optionsTableView: UITableView = {
@@ -81,7 +92,7 @@ final class NewHabitViewController: UIViewController {
         setupActions()
     }
     
-    // MARK: - Private methods
+    // MARK: - Private Methods
     private func setupUI() {
         view.backgroundColor = .ypWhiteIOS
         navigationItem.title = "Новая привычка"
@@ -91,6 +102,7 @@ final class NewHabitViewController: UIViewController {
         ]
         
         view.addSubview(titleTextField)
+        view.addSubview(errorLabel)
         view.addSubview(optionsTableView)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
@@ -107,6 +119,7 @@ final class NewHabitViewController: UIViewController {
         cancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
         
+        titleTextField.delegate = self
         titleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
@@ -117,7 +130,12 @@ final class NewHabitViewController: UIViewController {
             titleTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             titleTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            optionsTableView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24),
+            errorLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 8),
+            errorLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            errorLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            errorLabel.heightAnchor.constraint(equalToConstant: 22),
+            
+            optionsTableView.topAnchor.constraint(equalTo: errorLabel.bottomAnchor, constant: 24),
             optionsTableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             optionsTableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             optionsTableView.heightAnchor.constraint(equalToConstant: 150),
@@ -232,5 +250,40 @@ extension NewHabitViewController: ScheduleViewControllerDelegate {
         self.selectedScheduleDays = selectedDays
         optionsTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
         updateCreateButtonState()
+    }
+}
+
+extension NewHabitViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        if updatedText.count > 38 {
+            showError(true)
+            return false
+        } else {
+            showError(false)
+            return true
+        }
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateCreateButtonState()
+        let text = textField.text ?? ""
+        if text.count > 38 {
+            showError(true)
+        } else {
+            showError(false)
+        }
+    }
+    
+    private func showError(_ show: Bool) {
+        errorLabel.isHidden = !show
+    }
+    
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+        showError(false)
+        return true
     }
 }
