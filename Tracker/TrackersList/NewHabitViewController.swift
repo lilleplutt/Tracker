@@ -1,16 +1,10 @@
 import UIKit
 
-
-
 final class NewHabitViewController: UIViewController {
-    
-    // MARK: - Protocols
-    protocol ScheduleViewControllerDelegate: AnyObject {
-        func getConfiguredSchedule(_ selectedDays: [Int])
-    }
     
     // MARK: - Properties
     private var selectedScheduleDays: [Int] = []
+    private var scheduleText: String = ""
     var onCreateTracker: ((Tracker) -> Void)?
     
     // MARK: - UI Elements
@@ -160,6 +154,16 @@ final class NewHabitViewController: UIViewController {
         createButton.backgroundColor = createButton.isEnabled ? .ypBlackIOS : .ypGrayIOS
     }
     
+    private func getScheduleText(from days: [Int]) -> String {
+        if days.count == 7 {
+            return "Каждый день"
+        } else {
+            let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+            let selectedDaySymbols = days.sorted().map { daySymbols[$0] }
+            return selectedDaySymbols.joined(separator: ", ")
+        }
+    }
+    
     // MARK: - Actions
     @objc private func textFieldDidChange() {
         updateCreateButtonState()
@@ -213,12 +217,12 @@ extension NewHabitViewController: UITableViewDataSource {
         case 1:
             cell.textLabel?.text = "Расписание"
             if !selectedScheduleDays.isEmpty {
-                let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-                let selectedDaySymbols = selectedScheduleDays.sorted().map { daySymbols[$0] }
-                cell.detailTextLabel?.text = selectedDaySymbols.joined(separator: ", ")
+                cell.detailTextLabel?.text = scheduleText.isEmpty ?
+                getScheduleText(from: selectedScheduleDays) : scheduleText
             } else {
                 cell.detailTextLabel?.text = nil
             }
+            cell.accessoryType = .disclosureIndicator
         default:
             break
         }
@@ -237,19 +241,16 @@ extension NewHabitViewController: UITableViewDelegate {
         case 1:
             let scheduleVC = ScheduleViewController()
             scheduleVC.selectedDays = Set(selectedScheduleDays)
-            scheduleVC.delegate = self
+            
+            scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
+                self?.selectedScheduleDays = selectedDays
+                self?.scheduleText = scheduleText
+                self?.optionsTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
+            }
             navigationController?.pushViewController(scheduleVC, animated: true)
         default:
             break
         }
-    }
-}
-
-extension NewHabitViewController: ScheduleViewControllerDelegate {
-    func getConfiguredSchedule(_ selectedDays: [Int]) {
-        self.selectedScheduleDays = selectedDays
-        optionsTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
-        updateCreateButtonState()
     }
 }
 
