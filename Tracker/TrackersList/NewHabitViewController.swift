@@ -213,7 +213,7 @@ extension NewHabitViewController: UITableViewDataSource {
         switch indexPath.row {
         case 0:
             cell.textLabel?.text = "Категория"
-            cell.detailTextLabel?.text = nil
+            cell.detailTextLabel?.text = "Важное"
         case 1:
             cell.textLabel?.text = "Расписание"
             if !selectedScheduleDays.isEmpty {
