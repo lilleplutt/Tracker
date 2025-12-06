@@ -33,22 +33,17 @@ final class TrackersViewController: UIViewController {
     private var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Поиск"
+        searchController.obscuresBackgroundDuringPresentation = false
         return searchController
     }()
     
-    private let dateButton: UIButton = {
-        let button = UIButton()
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd.MM.yy"
-        let currentDate = formatter.string(from: Date())
-        
-        button.setTitle(currentDate, for: .normal)
-        button.setTitleColor(.ypBlackIOS, for: .normal)
-        button.backgroundColor = UIColor(resource: .ypBackgroundIOS)
-        button.layer.cornerRadius = 8
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
+    private lazy var datePicker: UIDatePicker = {
+        let picker = UIDatePicker()
+        picker.preferredDatePickerStyle = .compact
+        picker.datePickerMode = .date
+        picker.locale = Locale(identifier: "ru_RU")
+        picker.addTarget(self, action: #selector(datePickerValueChanged), for: .valueChanged)
+        return picker
     }()
     
     private lazy var collectionView: UICollectionView = {
@@ -62,6 +57,11 @@ final class TrackersViewController: UIViewController {
     // MARK: - Properties
     private var categories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
+    var currentDate: Date = Date() {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -85,7 +85,7 @@ final class TrackersViewController: UIViewController {
     }
     
     private func setupNavigationBar() {
-        let dateBarButtonItem = UIBarButtonItem(customView: dateButton)
+        let dateBarButtonItem = UIBarButtonItem(customView: datePicker)
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
         navigationItem.leftBarButtonItem = plusBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem
@@ -97,11 +97,10 @@ final class TrackersViewController: UIViewController {
         ]
         navigationItem.title = "Трекеры"
         navigationItem.searchController = searchController
+        searchController.searchResultsUpdater = self
         
-        NSLayoutConstraint.activate([
-            dateButton.widthAnchor.constraint(equalToConstant: 77),
-            dateButton.heightAnchor.constraint(equalToConstant: 34)
-        ])
+        // Восстановление заголовка при закрытии поиска
+        searchController.delegate = self
     }
     
     private func setupCollectionView() {
@@ -138,6 +137,11 @@ final class TrackersViewController: UIViewController {
         present(navController, animated: true)
     }
     
+    @objc private func datePickerValueChanged() {
+        currentDate = datePicker.date
+        updateStubVisibility()
+    }
+    
     private func addNewTracker(_ tracker: Tracker) {
         if categories.isEmpty {
             let category = TrackerCategory(
@@ -159,8 +163,14 @@ final class TrackersViewController: UIViewController {
         updateStubVisibility()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        datePicker.date = currentDate
+    }
+    
     private func updateStubVisibility() {
-        let hasTrackers = !categories.isEmpty && !categories[0].trackers.isEmpty
+        let filteredCategories = getFilteredTrackers()
+        let hasTrackers = !filteredCategories.isEmpty && !filteredCategories.allSatisfy { $0.trackers.isEmpty }
         stubImage.isHidden = hasTrackers
         stubTitleLabel.isHidden = hasTrackers
     }
@@ -185,24 +195,49 @@ final class TrackersViewController: UIViewController {
         return "\(value) \(word)"
     }
     
-    private func isCompleted(id: UUID) -> Bool {
-        return completedTrackers.contains { $0.trackerId == id }
+    private func isCompleted(id: UUID, date: Date) -> Bool {
+        let calendar = Calendar.current
+        let normalizedDate = calendar.startOfDay(for: date)
+        return completedTrackers.contains { record in
+            record.trackerId == id && calendar.isDate(record.date, inSameDayAs: normalizedDate)
+        }
     }
     
     private func getCurrentQuanity(id: UUID) -> Int {
         return completedTrackers.filter { $0.trackerId == id }.count
+    }
+    
+    private func getWeekday(from date: Date) -> Int {
+        let calendar = Calendar.current
+        var weekday = calendar.component(.weekday, from: date)
+        // Конвертируем из системы где воскресенье = 1 в систему где понедельник = 0
+        weekday = (weekday + 5) % 7
+        return weekday
+    }
+    
+    private func trackerMatchesDate(_ tracker: Tracker, date: Date) -> Bool {
+        let weekday = getWeekday(from: date)
+        return tracker.schedule.contains { $0.weekday == weekday }
+    }
+    
+    private func getFilteredTrackers() -> [TrackerCategory] {
+        return categories.map { category in
+            let filteredTrackers = category.trackers.filter { trackerMatchesDate($0, date: currentDate) }
+            return TrackerCategory(title: category.title, trackers: filteredTrackers)
+        }.filter { !$0.trackers.isEmpty }
     }
 }
 
 // MARK: - UICollectionViewDataSource
 extension TrackersViewController: UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return categories.count
+        return getFilteredTrackers().count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard section < categories.count else { return 0 }
-        return categories[section].trackers.count
+        let filteredCategories = getFilteredTrackers()
+        guard section < filteredCategories.count else { return 0 }
+        return filteredCategories[section].trackers.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -213,8 +248,9 @@ extension TrackersViewController: UICollectionViewDataSource {
             return UICollectionViewCell()
         }
         
-        let tracker = categories[indexPath.section].trackers[indexPath.row]
-        let isCompleted = isCompleted(id: tracker.id)
+        let filteredCategories = getFilteredTrackers()
+        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
+        let isCompleted = isCompleted(id: tracker.id, date: currentDate)
         let quanity = getCurrentQuanity(id: tracker.id)
         
         cell.configure(with: tracker, isCompleted: isCompleted, quanity: quanity)
@@ -252,17 +288,48 @@ protocol TrackersCollectionViewCellDelegate: AnyObject {
 
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     func completeButtonDidTap(in cell: TrackersCollectionViewCell) {
+        // Проверяем, что дата не в будущем
+        let calendar = Calendar.current
+        if calendar.compare(currentDate, to: Date(), toGranularity: .day) == .orderedDescending {
+            return // Нельзя отметить для будущей даты
+        }
+        
         if let indexPath = collectionView.indexPath(for: cell) {
-            let tracker = categories[indexPath.section].trackers[indexPath.row]
-            let record = TrackerRecord(trackerId: tracker.id, date: Date())
+            let filteredCategories = getFilteredTrackers()
+            let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
             
-            if isCompleted(id: tracker.id) {
-                completedTrackers.remove(record)
+            // Нормализуем дату до начала дня для сравнения
+            let normalizedDate = calendar.startOfDay(for: currentDate)
+            let record = TrackerRecord(trackerId: tracker.id, date: normalizedDate)
+            
+            if isCompleted(id: tracker.id, date: currentDate) {
+                // Удаляем запись для этой конкретной даты
+                if let recordToRemove = completedTrackers.first(where: { existingRecord in
+                    existingRecord.trackerId == tracker.id && calendar.isDate(existingRecord.date, inSameDayAs: normalizedDate)
+                }) {
+                    completedTrackers.remove(recordToRemove)
+                }
             } else {
                 completedTrackers.insert(record)
             }
             
             collectionView.reloadItems(at: [indexPath])
         }
+    }
+}
+
+// MARK: - UISearchResultsUpdating
+extension TrackersViewController: UISearchResultsUpdating {
+    func updateSearchResults(for searchController: UISearchController) {
+        // Поиск будет реализован позже, если нужно
+        collectionView.reloadData()
+    }
+}
+
+// MARK: - UISearchControllerDelegate
+extension TrackersViewController: UISearchControllerDelegate {
+    func didDismissSearchController(_ searchController: UISearchController) {
+        // Восстанавливаем заголовок при закрытии поиска
+        navigationItem.title = "Трекеры"
     }
 }
