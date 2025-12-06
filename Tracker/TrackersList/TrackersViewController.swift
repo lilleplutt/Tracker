@@ -33,7 +33,6 @@ final class TrackersViewController: UIViewController {
     private var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = "Поиск"
-        searchController.obscuresBackgroundDuringPresentation = false
         return searchController
     }()
     
@@ -129,9 +128,6 @@ final class TrackersViewController: UIViewController {
         ]
         navigationItem.title = "Трекеры"
         navigationItem.searchController = searchController
-        searchController.searchResultsUpdater = self
-        
-        searchController.delegate = self
     }
     
     private func setupDatePickerConstraints() {
@@ -204,7 +200,7 @@ final class TrackersViewController: UIViewController {
             )
             categories.append(category)
         } else {
-            var existingCategory = categories[0]
+            let existingCategory = categories[0]
             var updatedTrackers = existingCategory.trackers
             updatedTrackers.append(tracker)
             categories[0] = TrackerCategory(
@@ -412,21 +408,3 @@ extension TrackersViewController: UISearchResultsUpdating {
     }
 }
 
-// MARK: - UISearchControllerDelegate
-extension TrackersViewController: UISearchControllerDelegate {
-    func willDismissSearchController(_ searchController: UISearchController) {
-        DispatchQueue.main.async { [weak self] in
-            self?.navigationItem.title = "Трекеры"
-        }
-    }
-    
-    func didDismissSearchController(_ searchController: UISearchController) {
-        DispatchQueue.main.async { [weak self] in
-            self?.navigationItem.title = "Трекеры"
-        }
-    }
-    
-    func willPresentSearchController(_ searchController: UISearchController) {
-        
-    }
-}
