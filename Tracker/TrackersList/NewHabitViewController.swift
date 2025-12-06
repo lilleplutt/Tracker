@@ -7,58 +7,18 @@ final class NewHabitViewController: UIViewController {
     private var scheduleText: String = ""
     var onCreateTracker: ((Tracker) -> Void)?
     
-    // MARK: - UI Elements
-    private let scrollView: UIScrollView = {
-        let scrollView = UIScrollView()
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        return scrollView
-    }()
-    
-    private let contentView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    private let titleTextField: UITextField = {
-        let textField = UITextField()
-        textField.attributedPlaceholder = NSAttributedString(
-            string: "Введите название трекера",
-            attributes: [NSAttributedString.Key.foregroundColor: UIColor.ypGrayIOS]
-        )
-        textField.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        textField.backgroundColor = UIColor(resource: .ypBackgroundIOS)
-        textField.layer.cornerRadius = 16
-        textField.layer.masksToBounds = true
-        
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
-        textField.leftView = paddingView
-        textField.leftViewMode = .always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        return textField
-    }()
-    
-    private let errorLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
-        label.textColor = .ypRedIOS
-        label.text = "Ограничение 38 символов"
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.isHidden = true
-        return label
-    }()
-    
     private let optionsTableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor(resource: .ypBackgroundIOS)
+        tableView.backgroundColor = .ypWhiteIOS
         tableView.layer.cornerRadius = 16
         tableView.layer.masksToBounds = true
-        tableView.isScrollEnabled = false
         tableView.separatorStyle = .singleLine
         tableView.separatorColor = .ypGrayIOS.withAlphaComponent(0.3)
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.register(EnterNameCell.self, forCellReuseIdentifier: EnterNameCell.reuseID)
+        
         return tableView
     }()
     
@@ -108,12 +68,8 @@ final class NewHabitViewController: UIViewController {
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
-        
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubview(titleTextField)
-        contentView.addSubview(errorLabel)
-        contentView.addSubview(optionsTableView)
+
+        view.addSubview(optionsTableView)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
     }
@@ -128,41 +84,14 @@ final class NewHabitViewController: UIViewController {
     private func setupActions() {
         cancelButton.addTarget(self, action: #selector(didTapCancelButton), for: .touchUpInside)
         createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
-        
-        titleTextField.delegate = self
-        titleTextField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
     }
     
     private func setupConstraints() {
-        tableViewTopConstraint = optionsTableView.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 24)
-        
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: cancelButton.topAnchor, constant: -16),
-            
-            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor),
-            contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
-            
-            titleTextField.heightAnchor.constraint(equalToConstant: 75),
-            titleTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 24),
-            titleTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            errorLabel.topAnchor.constraint(equalTo: titleTextField.bottomAnchor, constant: 8),
-            errorLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            errorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            errorLabel.heightAnchor.constraint(equalToConstant: 22),
-            
-            tableViewTopConstraint,
-            optionsTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            optionsTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            optionsTableView.heightAnchor.constraint(equalToConstant: 150),
-            optionsTableView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            optionsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            optionsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            optionsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            optionsTableView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -16),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -177,10 +106,10 @@ final class NewHabitViewController: UIViewController {
     }
     
     private func updateCreateButtonState() {
-        let hasTitle = !(titleTextField.text?.isEmpty ?? true)
-        let hasSchedule = !selectedScheduleDays.isEmpty
+//        let hasTitle = !(titleTextField.text?.isEmpty ?? true)
+//        let hasSchedule = !selectedScheduleDays.isEmpty
         
-        createButton.isEnabled = hasTitle && hasSchedule
+        createButton.isEnabled = true // hasTitle && hasSchedule
         createButton.backgroundColor = createButton.isEnabled ? .ypBlackIOS : .ypGrayIOS
     }
     
@@ -204,11 +133,11 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
-        guard let title = titleTextField.text, !title.isEmpty else { return }
+        // guard let title = titleTextField.text, !title.isEmpty else { return }
         let schedule = selectedScheduleDays.map { Schedule(weekday: $0) }
         let tracker = Tracker(
             id: UUID(),
-            title: title,
+            title: "title",
             color: .ypBlueIOS,
             emoji: "🏃‍♂️",
             schedule: schedule
@@ -311,7 +240,7 @@ extension NewHabitViewController: UITextFieldDelegate {
     }
     
     private func showError(_ show: Bool) {
-        errorLabel.isHidden = !show
+        // errorLabel.isHidden = !show
         tableViewTopConstraint.constant = show ? 38 : 24
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
