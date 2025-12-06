@@ -187,13 +187,18 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
-        // guard let title = titleTextField.text, !title.isEmpty else { return }
-        let schedule = selectedScheduleDays.map { Schedule(weekday: $0) }
+        guard !state.title.isEmpty else { return }
+        
+        // Convert Weekday (1-7) to Schedule weekday format
+        let schedule = state.schedule.map { weekday -> Schedule in
+            Schedule(weekday: weekday.rawValue)
+        }
+        
         let tracker = Tracker(
             id: UUID(),
-            title: "title",
-            color: .ypBlueIOS,
-            emoji: "🏃‍♂️",
+            title: state.title,
+            color: state.color ?? .ypBlueIOS,
+            emoji: state.emoji,
             schedule: schedule
         )
         
