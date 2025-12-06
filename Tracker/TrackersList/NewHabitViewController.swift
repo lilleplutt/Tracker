@@ -108,20 +108,16 @@ final class NewHabitViewController: UIViewController {
     }
     
     private let optionsTableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
 
         tableView.register(EnterNameCell.self, forCellReuseIdentifier: EnterNameCell.reuseID)
         tableView.register(ParameterCell.self, forCellReuseIdentifier: ParameterCell.reuseID)
-        
+
         tableView.backgroundColor = .ypWhiteIOS
-
-        tableView.layer.cornerRadius = 16
-        tableView.layer.masksToBounds = true
-
-        tableView.separatorStyle = .singleLine
-        tableView.separatorColor = .ypGrayIOS.withAlphaComponent(0.3)
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.separatorStyle = .none
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.keyboardDismissMode = .onDrag
         
         return tableView
     }()
