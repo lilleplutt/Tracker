@@ -93,7 +93,6 @@ final class TrackerFormTableView: UIView {
             withIdentifier: TrackerTitleInputCell.reuseID,
             for: indexPath
         ) as? TrackerTitleInputCell else {
-            assertionFailure("❌[makeTitleInputCell]: can't dequeue reusable cell with id: \(TrackerTitleInputCell.reuseID)")
             return UITableViewCell()
         }
         cell.delegate = self
@@ -102,7 +101,6 @@ final class TrackerFormTableView: UIView {
     
     private func makeOptionCell(_ tableView: UITableView, for indexPath: IndexPath) -> UITableViewCell {
         guard let optionType = OptionType(rawValue: indexPath.row) else {
-            assertionFailure("❌[makeOptionCell] no such rawValue for \(String(describing: OptionType.self))")
             return UITableViewCell()
         }
         
@@ -110,7 +108,6 @@ final class TrackerFormTableView: UIView {
             withIdentifier: TrackerOptionCell.reuseID,
             for: indexPath
         ) as? TrackerOptionCell else {
-            assertionFailure("❌[makeOptionCell]: can't dequeue reusable cell with id: \(TrackerOptionCell.reuseID)")
             return UITableViewCell()
         }
         
@@ -210,4 +207,3 @@ extension TrackerFormTableView: TrackerTitleInputCellDelegate {
         delegate?.trackerFormTableViewDidRequestLayoutUpdate(self)
     }
 }
-
