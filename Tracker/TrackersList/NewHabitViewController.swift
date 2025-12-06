@@ -62,7 +62,7 @@ final class NewHabitViewController: UIViewController {
         return tableView
     }()
     
-    private var tableViewTopConstraint: NSLayoutConstraint?
+    private var tableViewTopConstraint = NSLayoutConstraint()
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
@@ -158,7 +158,7 @@ final class NewHabitViewController: UIViewController {
             errorLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             errorLabel.heightAnchor.constraint(equalToConstant: 22),
             
-            tableViewTopConstraint!,
+            tableViewTopConstraint,
             optionsTableView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             optionsTableView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             optionsTableView.heightAnchor.constraint(equalToConstant: 150),
@@ -312,7 +312,7 @@ extension NewHabitViewController: UITextFieldDelegate {
     
     private func showError(_ show: Bool) {
         errorLabel.isHidden = !show
-        tableViewTopConstraint?.constant = show ? 38 : 24
+        tableViewTopConstraint.constant = show ? 38 : 24
         UIView.animate(withDuration: 0.2) {
             self.view.layoutIfNeeded()
         }
