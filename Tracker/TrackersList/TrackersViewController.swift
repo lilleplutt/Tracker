@@ -156,7 +156,7 @@ final class TrackersViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "header"
         )
-        collectionView.contentInset = UIEdgeInsets(top: 24, left: 0, bottom: 0, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     private func setupConstraints() {
@@ -360,7 +360,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
         
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 28),
-            label.bottomAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -12)
+            label.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -20)
         ])
         
         return headerView
