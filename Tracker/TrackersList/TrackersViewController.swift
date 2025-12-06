@@ -58,7 +58,7 @@ final class TrackersViewController: UIViewController {
         label.numberOfLines = 1
         label.textAlignment = .center
         label.textColor = UIColor(resource: .ypBlackIOS)
-        label.backgroundColor = UIColor(resource: .ypBackgroundIOS)
+        label.backgroundColor = UIColor(resource: .ypDateIOS)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 8
         label.text = dateFormatter.string(from: datePicker.date)
