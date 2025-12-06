@@ -14,7 +14,9 @@ final class TrackerFormView: UIView {
     
     // MARK: - Private Properties
     
-    private var trackerState: NewTrackerState
+    private var formTitle: String
+    private var formCategory: String
+    private var formSchedule: [Schedule]
     
     // MARK: - Views
     
@@ -62,8 +64,10 @@ final class TrackerFormView: UIView {
     
     // MARK: - Initializer
     
-    init(initialState: NewTrackerState) {
-        self.trackerState = initialState
+    init(title: String, category: String, schedule: [Schedule]) {
+        self.formTitle = title
+        self.formCategory = category
+        self.formSchedule = schedule
         super.init(frame: .zero)
         setupUI()
         updateDisplayedData()
@@ -75,8 +79,8 @@ final class TrackerFormView: UIView {
     
     // MARK: - Public Methods
     
-    func updateState(_ newState: NewTrackerState) {
-        trackerState = newState
+    func updateSchedule(_ schedule: [Schedule]) {
+        formSchedule = schedule
         updateDisplayedData()
     }
     
@@ -113,13 +117,13 @@ final class TrackerFormView: UIView {
     private func updateDisplayedData() {
         let categoryConfig = TrackerOptionConfiguration(
             title: "Категория",
-            subtitle: trackerState.category,
+            subtitle: formCategory,
             isFirst: true,
             isLast: false
         )
         categoryOptionView.configure(with: categoryConfig)
         
-        let scheduleString = Weekday.formattedWeekdays(Array(trackerState.schedule))
+        let scheduleString = ScheduleHelper.formattedSchedule(from: formSchedule)
         let scheduleConfig = TrackerOptionConfiguration(
             title: "Расписание",
             subtitle: scheduleString,
