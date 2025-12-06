@@ -166,8 +166,8 @@ final class TrackersViewController: UIViewController {
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            stubImage.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubImage.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stubImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
             
