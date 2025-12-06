@@ -10,7 +10,7 @@ final class NewHabitViewController: UIViewController {
     private var formTitle: String = ""
     private var formCategory: String = "Важное"
     private var formSchedule: [Schedule] = []
-    private var formEmoji: String = "🤪"
+    private var formEmoji: String = "😭"
     private var formColor: UIColor = .ypRedIOS
     
     private var isFormReady: Bool {
