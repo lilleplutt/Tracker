@@ -161,4 +161,3 @@ extension EnterNameCell: UITextFieldDelegate {
     }
     
 }
-
