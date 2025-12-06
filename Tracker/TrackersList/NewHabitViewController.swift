@@ -103,7 +103,6 @@ final class NewHabitViewController: UIViewController {
     }
     
     // MARK: - Actions
-    
     @objc private func didTapCancelButton() {
         dismiss(animated: true)
     }
@@ -142,7 +141,6 @@ extension NewHabitViewController: TrackerFormViewDelegate {
     
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
         let scheduleVC = ScheduleViewController()
-        // ScheduleViewController и Schedule используют одну систему (0-6)
         let scheduleIndices = Set(formSchedule.map { $0.weekday })
         scheduleVC.selectedDays = scheduleIndices
         
@@ -151,7 +149,6 @@ extension NewHabitViewController: TrackerFormViewDelegate {
             self.selectedScheduleDays = selectedDays
             self.scheduleText = scheduleText
             
-            // Конвертируем индексы в Schedule
             self.formSchedule = selectedDays.map { Schedule(weekday: $0) }
             self.formView.updateSchedule(self.formSchedule)
             self.updateCreateButtonState()

@@ -126,7 +126,14 @@ final class TrackersViewController: UIViewController {
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 34, weight: .bold)
         ]
+        
         navigationItem.title = "Трекеры"
+        navigationItem.largeTitleDisplayMode = .always
+        
+        if #available(iOS 26.0, *) {
+            navigationItem.largeTitle = "Трекеры"
+        }
+        
         navigationItem.searchController = searchController
     }
     
@@ -161,10 +168,11 @@ final class TrackersViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            // https://stackoverflow.com/questions/79778204/navigation-item-title-hidden-when-using-large-title-in-ios26
+            collectionView.topAnchor.constraint(equalTo: view.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             stubImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),

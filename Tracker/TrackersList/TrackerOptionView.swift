@@ -14,11 +14,9 @@ struct TrackerOptionConfiguration {
 final class TrackerOptionView: UIView {
     
     // MARK: - Delegate
-    
     weak var delegate: TrackerOptionViewDelegate?
     
     // MARK: - Views
-    
     private lazy var labelsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         stackView.axis = .vertical
@@ -79,7 +77,6 @@ final class TrackerOptionView: UIView {
     }()
     
     // MARK: - Initializer
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -89,8 +86,7 @@ final class TrackerOptionView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Setup UI
-    
+    // MARK: - Private Methods
     private func setupUI() {
         addSubview(backgroundContainerView)
         backgroundContainerView.addSubview(mainStackView)
@@ -99,8 +95,6 @@ final class TrackerOptionView: UIView {
         setupConstraints()
         setupActions()
     }
-    
-    // MARK: - Setup Constraints
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -124,21 +118,17 @@ final class TrackerOptionView: UIView {
         ])
     }
     
-    // MARK: - Setup Actions
-    
+    // MARK: - Actions
     private func setupActions() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tapGesture)
     }
-    
-    // MARK: - Actions
     
     @objc private func didTap() {
         delegate?.trackerOptionViewDidTap(self)
     }
     
     // MARK: - Public Methods
-    
     func configure(with configuration: TrackerOptionConfiguration) {
         titleLabel.text = configuration.title
         subtitleLabel.text = configuration.subtitle

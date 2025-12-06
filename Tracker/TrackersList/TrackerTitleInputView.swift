@@ -7,11 +7,9 @@ protocol TrackerTitleInputViewDelegate: AnyObject {
 final class TrackerTitleInputView: UIView {
     
     // MARK: - Delegate
-    
     weak var delegate: TrackerTitleInputViewDelegate?
     
     // MARK: - Views
-    
     private lazy var titleTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Введите название трекера"
@@ -55,11 +53,9 @@ final class TrackerTitleInputView: UIView {
     }()
     
     // MARK: - Private Properties
-    
     private let maxCharacterCount = 38
     
     // MARK: - Initializer
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureDependencies()
@@ -71,21 +67,17 @@ final class TrackerTitleInputView: UIView {
     }
     
     // MARK: - Configure Dependencies
-    
     private func configureDependencies() {
         titleTextField.delegate = self
     }
     
-    // MARK: - Setup UI
-    
+    // MARK: - Private Methods
     private func setupUI() {
         addSubview(contentStackView)
         backgroundContainerView.addSubview(titleTextField)
         setupConstraints()
         setupActions()
     }
-    
-    // MARK: - Setup Constraints
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -105,29 +97,23 @@ final class TrackerTitleInputView: UIView {
         ])
     }
     
-    // MARK: - Setup Actions
-    
     private func setupActions() {
         titleTextField.addTarget(self, action: #selector(titleTextFieldEditingChanged), for: .editingChanged)
     }
     
-    // MARK: - Actions
+    private func isTextTooLong(_ text: String) -> Bool {
+        return text.count > maxCharacterCount
+    }
     
+    // MARK: - Actions
     @objc private func titleTextFieldEditingChanged() {
         let text = titleTextField.text ?? ""
         errorMessageLabel.isHidden = !isTextTooLong(text)
         delegate?.trackerTitleInputView(self, didChangeText: text)
     }
-    
-    // MARK: - Private Methods
-    
-    private func isTextTooLong(_ text: String) -> Bool {
-        return text.count > maxCharacterCount
-    }
 }
 
 // MARK: - UITextFieldDelegate
-
 extension TrackerTitleInputView: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {

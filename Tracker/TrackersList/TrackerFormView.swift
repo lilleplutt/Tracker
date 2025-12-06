@@ -9,17 +9,14 @@ protocol TrackerFormViewDelegate: AnyObject {
 final class TrackerFormView: UIView {
     
     // MARK: - Delegate
-    
     weak var delegate: TrackerFormViewDelegate?
     
     // MARK: - Private Properties
-    
     private var formTitle: String
     private var formCategory: String
     private var formSchedule: [Schedule]
     
     // MARK: - Views
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -63,7 +60,6 @@ final class TrackerFormView: UIView {
     }()
     
     // MARK: - Initializer
-    
     init(title: String, category: String, schedule: [Schedule]) {
         self.formTitle = title
         self.formCategory = category
@@ -78,14 +74,12 @@ final class TrackerFormView: UIView {
     }
     
     // MARK: - Public Methods
-    
     func updateSchedule(_ schedule: [Schedule]) {
         formSchedule = schedule
         updateDisplayedData()
     }
     
     // MARK: - Private Methods
-    
     private func setupUI() {
         addSubview(scrollView)
         scrollView.addSubview(contentStackView)
@@ -108,7 +102,6 @@ final class TrackerFormView: UIView {
             contentStackView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
         ])
         
-        // Устанавливаем высоту спейсера, чтобы контент всегда был скроллируемым
         let heightConstraint = bottomSpacerView.heightAnchor.constraint(equalToConstant: 1)
         heightConstraint.isActive = true
         bottomSpacerHeightConstraint = heightConstraint
@@ -135,7 +128,6 @@ final class TrackerFormView: UIView {
 }
 
 // MARK: - TrackerTitleInputViewDelegate
-
 extension TrackerFormView: TrackerTitleInputViewDelegate {
     func trackerTitleInputView(_ view: TrackerTitleInputView, didChangeText text: String) {
         delegate?.trackerFormView(self, didChangeTitle: text)
@@ -143,7 +135,6 @@ extension TrackerFormView: TrackerTitleInputViewDelegate {
 }
 
 // MARK: - TrackerOptionViewDelegate
-
 extension TrackerFormView: TrackerOptionViewDelegate {
     func trackerOptionViewDidTap(_ view: TrackerOptionView) {
         if view === categoryOptionView {
