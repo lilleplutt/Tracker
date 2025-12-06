@@ -96,15 +96,15 @@ final class NewHabitViewController: UIViewController {
         didSet {
             createButton.isEnabled = state.isReady
             createButton.backgroundColor = state.isReady ? .ypBlackIOS : .ypGrayIOS
-            formTableView.updateState(state)
+            formView.updateState(state)
         }
     }
     
-    private lazy var formTableView: TrackerFormTableView = {
-        let tableView = TrackerFormTableView(initialState: state)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.delegate = self
-        return tableView
+    private lazy var formView: TrackerFormView = {
+        let view = TrackerFormView(initialState: state)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        return view
     }()
     
     private lazy var cancelButton: UIButton = {
@@ -151,7 +151,7 @@ final class NewHabitViewController: UIViewController {
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
 
-        view.addSubview(formTableView)
+        view.addSubview(formView)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
     }
@@ -163,10 +163,10 @@ final class NewHabitViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            formTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            formTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            formTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            formTableView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -16),
+            formView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            formView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            formView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            formView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -16),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -208,16 +208,16 @@ final class NewHabitViewController: UIViewController {
 }
 
 // MARK: - Extensions
-extension NewHabitViewController: TrackerFormTableViewDelegate {
-    func trackerFormTableView(_ tableView: TrackerFormTableView, didChangeTitle text: String) {
+extension NewHabitViewController: TrackerFormViewDelegate {
+    func trackerFormView(_ view: TrackerFormView, didChangeTitle text: String) {
         state.title = text
     }
     
-    func trackerFormTableView(_ tableView: TrackerFormTableView, didSelectCategoryAt indexPath: IndexPath) {
+    func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView) {
         print("Категория tapped")
     }
     
-    func trackerFormTableView(_ tableView: TrackerFormTableView, didSelectScheduleAt indexPath: IndexPath) {
+    func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
         let scheduleVC = ScheduleViewController()
         // Convert Weekday (1-7, where 1=Sunday) to ScheduleViewController indices (0-6, where 0=Monday)
         let scheduleIndices = state.schedule.map { weekday -> Int in
@@ -226,24 +226,19 @@ extension NewHabitViewController: TrackerFormTableViewDelegate {
         }
         scheduleVC.selectedDays = Set(scheduleIndices)
         
-            scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
-                guard let self = self else { return }
-                self.selectedScheduleDays = selectedDays
-                self.scheduleText = scheduleText
-                
-                // Map ScheduleViewController indices (0-6, where 0=Monday) to Weekday (1-7, where 1=Sunday)
-                let weekdays = Set(selectedDays.map { index -> Weekday? in
-                    // 0 (Monday) -> 2, 1 (Tuesday) -> 3, ..., 5 (Saturday) -> 7, 6 (Sunday) -> 1
-                    let weekdayValue = index == 6 ? 1 : index + 2
-                    return Weekday(rawValue: weekdayValue)
-                }.compactMap { $0 })
-                self.state.schedule = weekdays
-                self.formTableView.reloadScheduleRow()
-            }
+        scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
+            guard let self = self else { return }
+            self.selectedScheduleDays = selectedDays
+            self.scheduleText = scheduleText
+            
+            // Map ScheduleViewController indices (0-6, where 0=Monday) to Weekday (1-7, where 1=Sunday)
+            let weekdays = Set(selectedDays.map { index -> Weekday? in
+                // 0 (Monday) -> 2, 1 (Tuesday) -> 3, ..., 5 (Saturday) -> 7, 6 (Sunday) -> 1
+                let weekdayValue = index == 6 ? 1 : index + 2
+                return Weekday(rawValue: weekdayValue)
+            }.compactMap { $0 })
+            self.state.schedule = weekdays
+        }
         navigationController?.pushViewController(scheduleVC, animated: true)
-    }
-    
-    func trackerFormTableViewDidRequestLayoutUpdate(_ tableView: TrackerFormTableView) {
-        // Layout updates are handled automatically by the table view
     }
 }

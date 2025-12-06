@@ -1,19 +1,14 @@
 import UIKit
 
-protocol TrackerTitleInputCellDelegate: AnyObject {
-    func trackerTitleInputCell(_ cell: TrackerTitleInputCell, didChangeText text: String)
-    func trackerTitleInputCellDidRequestLayoutUpdate(_ cell: TrackerTitleInputCell)
+protocol TrackerTitleInputViewDelegate: AnyObject {
+    func trackerTitleInputView(_ view: TrackerTitleInputView, didChangeText text: String)
 }
 
-final class TrackerTitleInputCell: UITableViewCell {
-    
-    // MARK: - Identifier
-    
-    static let reuseID = "TrackerTitleInputCellReuseIdentifier"
+final class TrackerTitleInputView: UIView {
     
     // MARK: - Delegate
     
-    weak var delegate: TrackerTitleInputCellDelegate?
+    weak var delegate: TrackerTitleInputViewDelegate?
     
     // MARK: - Views
     
@@ -25,6 +20,7 @@ final class TrackerTitleInputCell: UITableViewCell {
         textField.clearButtonMode = .whileEditing
         textField.returnKeyType = .go
         textField.enablesReturnKeyAutomatically = true
+        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
@@ -33,6 +29,7 @@ final class TrackerTitleInputCell: UITableViewCell {
         view.backgroundColor = .ypBackgroundIOS
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -43,6 +40,7 @@ final class TrackerTitleInputCell: UITableViewCell {
         label.text = "Ограничение 38 символов"
         label.textAlignment = .center
         label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -52,6 +50,7 @@ final class TrackerTitleInputCell: UITableViewCell {
         stackView.spacing = 0
         stackView.alignment = .center
         stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -61,8 +60,8 @@ final class TrackerTitleInputCell: UITableViewCell {
     
     // MARK: - Initializer
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureDependencies()
         setupUI()
     }
@@ -80,8 +79,7 @@ final class TrackerTitleInputCell: UITableViewCell {
     // MARK: - Setup UI
     
     private func setupUI() {
-        selectionStyle = .none
-        contentView.addSubview(contentStackView)
+        addSubview(contentStackView)
         backgroundContainerView.addSubview(titleTextField)
         setupConstraints()
         setupActions()
@@ -90,16 +88,11 @@ final class TrackerTitleInputCell: UITableViewCell {
     // MARK: - Setup Constraints
     
     private func setupConstraints() {
-        titleTextField.translatesAutoresizingMaskIntoConstraints = false
-        backgroundContainerView.translatesAutoresizingMaskIntoConstraints = false
-        errorMessageLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentStackView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
-            contentStackView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            contentStackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            contentStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            contentStackView.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            contentStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            contentStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            contentStackView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             
             backgroundContainerView.heightAnchor.constraint(equalToConstant: 75),
             backgroundContainerView.widthAnchor.constraint(equalTo: contentStackView.widthAnchor),
@@ -123,15 +116,10 @@ final class TrackerTitleInputCell: UITableViewCell {
     @objc private func titleTextFieldEditingChanged() {
         let text = titleTextField.text ?? ""
         errorMessageLabel.isHidden = !isTextTooLong(text)
-        requestLayoutUpdate()
-        delegate?.trackerTitleInputCell(self, didChangeText: text)
+        delegate?.trackerTitleInputView(self, didChangeText: text)
     }
     
     // MARK: - Private Methods
-    
-    private func requestLayoutUpdate() {
-        delegate?.trackerTitleInputCellDidRequestLayoutUpdate(self)
-    }
     
     private func isTextTooLong(_ text: String) -> Bool {
         return text.count > maxCharacterCount
@@ -140,7 +128,7 @@ final class TrackerTitleInputCell: UITableViewCell {
 
 // MARK: - UITextFieldDelegate
 
-extension TrackerTitleInputCell: UITextFieldDelegate {
+extension TrackerTitleInputView: UITextFieldDelegate {
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         let currentText = textField.text ?? ""
@@ -150,7 +138,6 @@ extension TrackerTitleInputCell: UITextFieldDelegate {
         let isTooLong = isTextTooLong(updatedText)
         if isTooLong {
             errorMessageLabel.isHidden = !isTooLong
-            requestLayoutUpdate()
         }
         return !isTooLong
     }

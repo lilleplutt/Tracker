@@ -1,5 +1,9 @@
 import UIKit
 
+protocol TrackerOptionViewDelegate: AnyObject {
+    func trackerOptionViewDidTap(_ view: TrackerOptionView)
+}
+
 struct TrackerOptionConfiguration {
     let title: String
     let subtitle: String
@@ -7,11 +11,11 @@ struct TrackerOptionConfiguration {
     let isLast: Bool
 }
 
-final class TrackerOptionCell: UITableViewCell {
+final class TrackerOptionView: UIView {
     
-    // MARK: - Identifier
+    // MARK: - Delegate
     
-    static let reuseID = "TrackerOptionCellReuseIdentifier"
+    weak var delegate: TrackerOptionViewDelegate?
     
     // MARK: - Views
     
@@ -21,6 +25,7 @@ final class TrackerOptionCell: UITableViewCell {
         stackView.spacing = 2
         stackView.alignment = .leading
         stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -30,6 +35,7 @@ final class TrackerOptionCell: UITableViewCell {
         stackView.spacing = 0
         stackView.alignment = .center
         stackView.distribution = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
     
@@ -38,6 +44,7 @@ final class TrackerOptionCell: UITableViewCell {
         view.backgroundColor = .ypBackgroundIOS
         view.layer.masksToBounds = true
         view.layer.cornerRadius = 16
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -45,6 +52,7 @@ final class TrackerOptionCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypBlackIOS
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -52,40 +60,28 @@ final class TrackerOptionCell: UITableViewCell {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypGrayIOS
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var chevronImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = .chevron
+        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var separatorView: UIView = {
         let view = UIView()
         view.backgroundColor = .ypGrayIOS
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    // MARK: - Private Properties
-    
-    private var optionTitle: String = "" {
-        didSet {
-            titleLabel.text = optionTitle
-        }
-    }
-    
-    private var optionSubtitle: String = "" {
-        didSet {
-            subtitleLabel.text = optionSubtitle
-            subtitleLabel.isHidden = optionSubtitle.isEmpty
-        }
-    }
-    
     // MARK: - Initializer
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
     }
     
@@ -96,25 +92,17 @@ final class TrackerOptionCell: UITableViewCell {
     // MARK: - Setup UI
     
     private func setupUI() {
-        selectionStyle = .none
-        contentView.addSubview(backgroundContainerView)
+        addSubview(backgroundContainerView)
         backgroundContainerView.addSubview(mainStackView)
         backgroundContainerView.addSubview(separatorView)
         
         setupConstraints()
+        setupActions()
     }
     
     // MARK: - Setup Constraints
     
     private func setupConstraints() {
-        labelsStackView.translatesAutoresizingMaskIntoConstraints = false
-        mainStackView.translatesAutoresizingMaskIntoConstraints = false
-        backgroundContainerView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
-        chevronImageView.translatesAutoresizingMaskIntoConstraints = false
-        separatorView.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate([
             chevronImageView.widthAnchor.constraint(equalToConstant: 24),
             chevronImageView.heightAnchor.constraint(equalTo: chevronImageView.widthAnchor),
@@ -124,10 +112,10 @@ final class TrackerOptionCell: UITableViewCell {
             mainStackView.trailingAnchor.constraint(equalTo: backgroundContainerView.trailingAnchor, constant: -16),
             
             backgroundContainerView.heightAnchor.constraint(equalToConstant: 75),
-            backgroundContainerView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            backgroundContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            backgroundContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            backgroundContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
+            backgroundContainerView.topAnchor.constraint(equalTo: topAnchor),
+            backgroundContainerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            backgroundContainerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            backgroundContainerView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             separatorView.heightAnchor.constraint(equalToConstant: 0.5),
             separatorView.leadingAnchor.constraint(equalTo: backgroundContainerView.leadingAnchor, constant: 16),
@@ -136,11 +124,25 @@ final class TrackerOptionCell: UITableViewCell {
         ])
     }
     
+    // MARK: - Setup Actions
+    
+    private func setupActions() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        addGestureRecognizer(tapGesture)
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func didTap() {
+        delegate?.trackerOptionViewDidTap(self)
+    }
+    
     // MARK: - Public Methods
     
     func configure(with configuration: TrackerOptionConfiguration) {
-        optionTitle = configuration.title
-        optionSubtitle = configuration.subtitle
+        titleLabel.text = configuration.title
+        subtitleLabel.text = configuration.subtitle
+        subtitleLabel.isHidden = configuration.subtitle.isEmpty
         
         if configuration.isFirst {
             backgroundContainerView.layer.cornerRadius = 16
@@ -150,6 +152,8 @@ final class TrackerOptionCell: UITableViewCell {
             backgroundContainerView.layer.cornerRadius = 16
             backgroundContainerView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
             separatorView.isHidden = true
+        } else {
+            separatorView.isHidden = false
         }
     }
 }
