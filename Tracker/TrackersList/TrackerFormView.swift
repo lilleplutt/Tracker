@@ -110,14 +110,6 @@ final class TrackerFormView: UIView {
         bottomSpacerHeightConstraint = heightConstraint
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        // Обновляем высоту спейсера, чтобы контент всегда был скроллируемым
-        // let minContentHeight = scrollView.bounds.height + 1
-        // bottomSpacerHeightConstraint?.constant = minContentHeight
-    }
-    
     private func updateDisplayedData() {
         let categoryConfig = TrackerOptionConfiguration(
             title: "Категория",
