@@ -84,14 +84,6 @@ final class NewHabitViewController: UIViewController {
     private var scheduleText: String = ""
     var onCreateTracker: ((Tracker) -> Void)?
     
-    private enum SectionType: Int, CaseIterable {
-        case enterName, parameters
-    }
-    
-    private enum ParameterType: Int, CaseIterable {
-        case category, schedule
-    }
-    
     weak var delegate: NewTrackerViewControllerDelegate?
     
     private var state = NewTrackerState(
@@ -104,25 +96,16 @@ final class NewHabitViewController: UIViewController {
         didSet {
             createButton.isEnabled = state.isReady
             createButton.backgroundColor = state.isReady ? .ypBlackIOS : .ypGrayIOS
+            formTableView.updateState(state)
         }
     }
     
-    private let optionsTableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
+    private lazy var formTableView: TrackerFormTableView = {
+        let tableView = TrackerFormTableView(initialState: state)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-
-        tableView.register(EnterNameCell.self, forCellReuseIdentifier: EnterNameCell.reuseID)
-        tableView.register(ParameterCell.self, forCellReuseIdentifier: ParameterCell.reuseID)
-
-        tableView.backgroundColor = .ypWhiteIOS
-        tableView.separatorStyle = .none
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.keyboardDismissMode = .onDrag
-        
+        tableView.delegate = self
         return tableView
     }()
-    
-    private var tableViewTopConstraint = NSLayoutConstraint()
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
@@ -156,7 +139,6 @@ final class NewHabitViewController: UIViewController {
         super.viewDidLoad()
         setupUI()
         setupConstraints()
-        setupTableView()
         setupActions()
     }
     
@@ -169,16 +151,9 @@ final class NewHabitViewController: UIViewController {
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
         ]
 
-        view.addSubview(optionsTableView)
+        view.addSubview(formTableView)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
-    }
-    
-    private func setupTableView() {
-        optionsTableView.delegate = self
-        optionsTableView.dataSource = self
-        optionsTableView.register(UITableViewCell.self, forCellReuseIdentifier: "optionCell")
-        optionsTableView.rowHeight = 75
     }
     
     private func setupActions() {
@@ -188,10 +163,10 @@ final class NewHabitViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            optionsTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            optionsTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            optionsTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            optionsTableView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -16),
+            formTableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            formTableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            formTableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            formTableView.bottomAnchor.constraint(equalTo: createButton.topAnchor, constant: -16),
             
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -205,28 +180,7 @@ final class NewHabitViewController: UIViewController {
         ])
     }
     
-    private func updateCreateButtonState() {
-//        let hasTitle = !(titleTextField.text?.isEmpty ?? true)
-//        let hasSchedule = !selectedScheduleDays.isEmpty
-        
-        createButton.isEnabled = true // hasTitle && hasSchedule
-        createButton.backgroundColor = createButton.isEnabled ? .ypBlackIOS : .ypGrayIOS
-    }
-    
-    private func getScheduleText(from days: [Int]) -> String {
-        if days.count == 7 {
-            return "Каждый день"
-        } else {
-            let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
-            let selectedDaySymbols = days.sorted().map { daySymbols[$0] }
-            return selectedDaySymbols.joined(separator: ", ")
-        }
-    }
-    
     // MARK: - Actions
-    @objc private func textFieldDidChange() {
-        updateCreateButtonState()
-    }
     
     @objc private func didTapCancelButton() {
         dismiss(animated: true)
@@ -249,148 +203,42 @@ final class NewHabitViewController: UIViewController {
 }
 
 // MARK: - Extensions
-extension NewHabitViewController: UITableViewDataSource {
-    func numberOfSections(in tableView: UITableView) -> Int {
-        SectionType.allCases.count
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let sectionType = SectionType(rawValue: section) else {
-            return 0
-        }
-        switch sectionType {
-        case .enterName: return 1
-        case .parameters: return ParameterType.allCases.count
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let sectionType = SectionType(rawValue: indexPath.section) else {
-            return UITableViewCell()
-        }
-        
-        switch sectionType {
-        case .enterName:
-            return makeEnterNameCell(tableView, for: indexPath)
-        case .parameters:
-            return makeParameterCell(tableView, for: indexPath)
-        }
-    }
-    
-    private func makeEnterNameCell(_ tableView: UITableView, for indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: EnterNameCell.reuseID, for: indexPath) as? EnterNameCell else {
-            assertionFailure("❌[makeEnterNameCell]: can't dequeue reusable cell with id: \(EnterNameCell.reuseID) as \(String(describing: EnterNameCell.self))")
-            return UITableViewCell()
-        }
-        cell.delegate = self
-        return cell
-    }
-    
-    private func makeParameterCell(_ tableView: UITableView, for indexPath: IndexPath) -> UITableViewCell {
-        guard let parameterType = ParameterType(rawValue: indexPath.row) else {
-            assertionFailure("❌[makeParameterCell] no such rawValue for \(String(describing: ParameterType.self))")
-            return UITableViewCell()
-        }
-        
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: ParameterCell.reuseID, for: indexPath) as? ParameterCell else {
-            assertionFailure("❌[makeParameterCell]: can't dequeue reusable cell with id: \(ParameterCell.reuseID) as \(String(describing: ParameterCell.self))")
-            return UITableViewCell()
-        }
-        
-        let configuration = parameterConfig(type: parameterType)
-        cell.configure(parameter: configuration)
-        return cell
-    }
-    
-    private func parameterConfig(type: ParameterType) -> NewTrackerParameter {
-        switch type {
-        case .category:
-            return NewTrackerParameter(title: "Категория", subtitle: state.category, isFirst: true, isLast: false)
-        case .schedule:
-            let scheduleString = Weekday.formattedWeekdays(Array(state.schedule))
-            return NewTrackerParameter(title: "Расписание", subtitle: scheduleString, isFirst: false, isLast: true)
-        }
-    }
-}
-
-struct NewTrackerParameter {
-    let title: String
-    let subtitle: String
-    let isFirst: Bool
-    let isLast: Bool
-}
-
-extension NewHabitViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        switch indexPath.row {
-        case 0:
-            print("Категория tapped")
-        case 1:
-            let scheduleVC = ScheduleViewController()
-            scheduleVC.selectedDays = Set(selectedScheduleDays)
-            
-            scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
-                self?.selectedScheduleDays = selectedDays
-                self?.scheduleText = scheduleText
-                self?.optionsTableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
-                self?.updateCreateButtonState()
-            }
-            navigationController?.pushViewController(scheduleVC, animated: true)
-        default:
-            break
-        }
-    }
-}
-
-extension NewHabitViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        let currentText = textField.text ?? ""
-        guard let stringRange = Range(range, in: currentText) else { return false }
-        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
-        
-        if updatedText.count > 38 {
-            showError(true)
-            return false
-        } else {
-            showError(false)
-            return true
-        }
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        updateCreateButtonState()
-        let text = textField.text ?? ""
-        if text.count > 38 {
-            showError(true)
-        } else {
-            showError(false)
-        }
-    }
-    
-    private func showError(_ show: Bool) {
-        // errorLabel.isHidden = !show
-        tableViewTopConstraint.constant = show ? 38 : 24
-        UIView.animate(withDuration: 0.2) {
-            self.view.layoutIfNeeded()
-        }
-    }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
-        showError(false)
-        return true
-    }
-}
-
-extension NewHabitViewController: EnterNameCellDelegate {
-    
-    func enterNameCell(_ cell: EnterNameCell, didChangeText text: String) {
+extension NewHabitViewController: TrackerFormTableViewDelegate {
+    func trackerFormTableView(_ tableView: TrackerFormTableView, didChangeTitle text: String) {
         state.title = text
     }
     
-    func updateCellLayout() {
-        optionsTableView.beginUpdates()
-        optionsTableView.endUpdates()
+    func trackerFormTableView(_ tableView: TrackerFormTableView, didSelectCategoryAt indexPath: IndexPath) {
+        print("Категория tapped")
+    }
+    
+    func trackerFormTableView(_ tableView: TrackerFormTableView, didSelectScheduleAt indexPath: IndexPath) {
+        let scheduleVC = ScheduleViewController()
+        // Convert Weekday (1-7, where 1=Sunday) to ScheduleViewController indices (0-6, where 0=Monday)
+        let scheduleIndices = state.schedule.map { weekday -> Int in
+            // 1 (Sunday) -> 6, 2 (Monday) -> 0, 3 (Tuesday) -> 1, ..., 7 (Saturday) -> 5
+            return weekday.rawValue == 1 ? 6 : weekday.rawValue - 2
+        }
+        scheduleVC.selectedDays = Set(scheduleIndices)
+        
+            scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
+                guard let self = self else { return }
+                self.selectedScheduleDays = selectedDays
+                self.scheduleText = scheduleText
+                
+                // Map ScheduleViewController indices (0-6, where 0=Monday) to Weekday (1-7, where 1=Sunday)
+                let weekdays = Set(selectedDays.map { index -> Weekday? in
+                    // 0 (Monday) -> 2, 1 (Tuesday) -> 3, ..., 5 (Saturday) -> 7, 6 (Sunday) -> 1
+                    let weekdayValue = index == 6 ? 1 : index + 2
+                    return Weekday(rawValue: weekdayValue)
+                }.compactMap { $0 })
+                self.state.schedule = weekdays
+                self.formTableView.reloadScheduleRow()
+            }
+        navigationController?.pushViewController(scheduleVC, animated: true)
+    }
+    
+    func trackerFormTableViewDidRequestLayoutUpdate(_ tableView: TrackerFormTableView) {
+        // Layout updates are handled automatically by the table view
     }
 }
