@@ -1,10 +1,3 @@
-//
-//  TrackerUITests.swift
-//  TrackerUITests
-//
-//  Created by Alina on 12/11/2025.
-//
-
 import XCTest
 
 final class TrackerUITests: XCTestCase {
