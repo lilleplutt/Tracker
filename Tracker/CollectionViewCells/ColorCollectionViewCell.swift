@@ -8,10 +8,17 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     private lazy var colorView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
-        view.layer.cornerRadius = 16
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
+    override var isSelected: Bool {
+        didSet {
+            contentView.layer.borderWidth = isSelected ? 3 : 0
+            contentView.layer.borderColor = isSelected ? UIColor.ypBlackIOS.cgColor : nil
+            contentView.layer.cornerRadius = 16
+        }
+    }
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -24,15 +31,22 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     }
     
     //MARK: - Methods
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        contentView.layer.borderWidth = 0
+        contentView.layer.borderColor = nil
+        isSelected = false
+    }
+    
     private func setUpUI() {
         contentView.addSubview(colorView)
         NSLayoutConstraint.activate([
-            colorView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            colorView.widthAnchor.constraint(equalToConstant: 52),
-            colorView.heightAnchor.constraint(equalToConstant: 52)
+            colorView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 6),
+            colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 6),
+            colorView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -6),
+            colorView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -6)
         ])
+        colorView.layer.cornerRadius = 10
     }
     
     func configure(color: UIColor) {
