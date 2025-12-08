@@ -12,6 +12,8 @@ final class NewHabitViewController: UIViewController {
     private var formSchedule: [Schedule] = []
     
     private let emojis = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
+    private let colors: [UIColor] = ["Color1","Color2","Color3", "Color4", "Color5", "Color6", "Color7", "Color8", "Color9", "Color10", "Color11", "Color12", "Color13", "Color14", "Color15", "Color16", "Color17", "Color18"].compactMap { UIColor(named: $0) }
+    
     private var formEmoji: String = "😭"
     private var formColor: UIColor = .ypRedIOS
     
