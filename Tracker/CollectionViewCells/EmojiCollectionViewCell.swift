@@ -2,7 +2,7 @@ import UIKit
 
 final class EmojiCollectionViewCell: UICollectionViewCell {
     
-    //MARK: - Private Properties
+    //MARK: - Properties
     static let reuseIdentifier = "EmojiCollectionViewCell"
     
     private lazy var emojiLabel: UILabel = {
@@ -31,9 +31,8 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
     private func setUpUI() {
         contentView.addSubview(emojiLabel)
         NSLayoutConstraint.activate([
-            emojiLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
-            emojiLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            emojiLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            emojiLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            emojiLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             emojiLabel.widthAnchor.constraint(equalToConstant: 52),
             emojiLabel.heightAnchor.constraint(equalToConstant: 52)
             ])
