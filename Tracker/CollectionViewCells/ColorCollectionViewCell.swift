@@ -1,9 +1,9 @@
 import UIKit
 
-final class EmojiCollectionViewCell: UICollectionViewCell {
+final class ColorCollectionViewCell: UICollectionViewCell {
     
     //MARK: - Private Properties
-    static let reuseIdentifier = "EmojiCollectionViewCell"
+    static let reuseIdentifier = "ColorCollectionViewCell"
     
     // MARK: - Initialization
     override init(frame: CGRect) {
@@ -15,4 +15,3 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 }
-
