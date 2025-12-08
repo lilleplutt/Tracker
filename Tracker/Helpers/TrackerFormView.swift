@@ -18,6 +18,8 @@ final class TrackerFormView: UIView {
     private let colors: [UIColor]
     private var formSchedule: [Schedule]
     private var bottomSpacerHeightConstraint: NSLayoutConstraint?
+    private var selectedEmojiIndex: IndexPath?
+    private var selectedColorIndex: IndexPath
     
     // MARK: - Views
     private lazy var scrollView: UIScrollView = {
@@ -112,6 +114,8 @@ final class TrackerFormView: UIView {
         emojiCollectionView.delegate = self
         emojiCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier)
         emojiCollectionView.allowsMultipleSelection = false
+        emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        emojiCollectionView.heightAnchor.constraint(equalToConstant: 204).isActive = true
         contentStackView.addArrangedSubview(emojiCollectionView)
     }
     
@@ -120,6 +124,8 @@ final class TrackerFormView: UIView {
         colorCollectionView.delegate = self
         colorCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
         colorCollectionView.allowsMultipleSelection = false
+        colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
+        colorCollectionView.heightAnchor.constraint(equalToConstant: 204).isActive = true
         contentStackView.addArrangedSubview(colorCollectionView)
     }
     
@@ -199,7 +205,8 @@ extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateF
                 return UICollectionViewCell()
             }
             let emoji = emojis[indexPath.item]
-            cell.configure(emoji: emoji)
+            cell.configure(emoji: emojis[indexPath.item])
+            cell.isSelected = (indexPath == selectedEmojiIndex)
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(
@@ -209,16 +216,23 @@ extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateF
                 return UICollectionViewCell()
             }
             let color = colors[indexPath.item]
-            cell.configure(color: color)
+            cell.configure(color: colors[indexPath.item])
+            cell.isSelected = (indexPath == selectedColorIndex)
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView === emojiCollectionView {
-            // при одиночном выборе достаточно, система сама снимет выделение со старой
+            let prev = selectedEmojiIndex
+            selectedEmojiIndex = indexPath
+            if let prev { collectionView.reloadItems(at: [prev]) }
+            collectionView.reloadItems(at: [indexPath])
         } else {
-            // то же для цветов
+            let prev = selectedColorIndex
+            selectedColorIndex = indexPath
+            if let prev { collectionView.reloadItems(at: [prev]) }
+            collectionView.reloadItems(at: [indexPath])
         }
     }
     
