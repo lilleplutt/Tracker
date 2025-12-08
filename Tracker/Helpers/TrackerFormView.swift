@@ -97,6 +97,8 @@ final class TrackerFormView: UIView {
     // MARK: - Private Methods
     private func setupUI() {
         addSubview(scrollView)
+        setUpColorCollectionView()
+        setUpEmojiCollectionView()
         scrollView.addSubview(contentStackView)
         setupConstraints()
     }
@@ -108,7 +110,7 @@ final class TrackerFormView: UIView {
         contentStackView.addArrangedSubview(emojiCollectionView)
     }
     
-    private func setUpCmojiCollectionView() {
+    private func setUpColorCollectionView() {
         colorCollectionView.dataSource = self
         colorCollectionView.delegate = self
         colorCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
