@@ -2,7 +2,7 @@ import UIKit
 
 final class NewHabitViewController: UIViewController {
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     private var selectedScheduleDays: [Int] = []
     private var scheduleText: String = ""
     var onCreateTracker: ((Tracker) -> Void)?
@@ -10,6 +10,8 @@ final class NewHabitViewController: UIViewController {
     private var formTitle: String = ""
     private var formCategory: String = "Важное"
     private var formSchedule: [Schedule] = []
+    
+    private let emojis = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     private var formEmoji: String = "😭"
     private var formColor: UIColor = .ypRedIOS
     
