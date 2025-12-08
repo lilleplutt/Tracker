@@ -14,6 +14,8 @@ final class TrackerFormView: UIView {
     // MARK: - Private Properties
     private var formTitle: String
     private var formCategory: String
+    private let emojis: [String]
+    private let colors: [UIColor]
     private var formSchedule: [Schedule]
     private var bottomSpacerHeightConstraint: NSLayoutConstraint?
     
@@ -75,10 +77,12 @@ final class TrackerFormView: UIView {
     }()
     
     // MARK: - Initializer
-    init(title: String, category: String, schedule: [Schedule]) {
+    init(title: String, category: String, schedule: [Schedule], emojis: [String], colors: [UIColor]) {
         self.formTitle = title
         self.formCategory = category
         self.formSchedule = schedule
+        self.emojis = emojis
+        self.colors = colors
         super.init(frame: .zero)
         setupUI()
         updateDisplayedData()
@@ -177,11 +181,35 @@ extension TrackerFormView: TrackerOptionViewDelegate {
 //MARK: - CollectionView
 extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        <#code#>
+        if collectionView === emojiCollectionView {
+            return emojis.count
+        } else {
+            return colors.count
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        <#code#>
+        if collectionView === emojiCollectionView {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier,
+                for: indexPath
+            ) as? EmojiCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            let emoji = emojis[indexPath.item]
+            cell.configure(emoji: emoji)
+            return cell
+        } else {
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: ColorCollectionViewCell.reuseIdentifier,
+                for: indexPath
+            ) as? ColorCollectionViewCell else {
+                return UICollectionViewCell()
+            }
+            let color = colors[indexPath.item]
+            cell.configure(color: color)
+            return cell
+        }
     }
     
     
