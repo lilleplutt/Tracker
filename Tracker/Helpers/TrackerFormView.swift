@@ -111,6 +111,7 @@ final class TrackerFormView: UIView {
         emojiCollectionView.dataSource = self
         emojiCollectionView.delegate = self
         emojiCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier)
+        emojiCollectionView.allowsMultipleSelection = false
         contentStackView.addArrangedSubview(emojiCollectionView)
     }
     
@@ -118,6 +119,7 @@ final class TrackerFormView: UIView {
         colorCollectionView.dataSource = self
         colorCollectionView.delegate = self
         colorCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
+        colorCollectionView.allowsMultipleSelection = false
         contentStackView.addArrangedSubview(colorCollectionView)
     }
     
@@ -212,6 +214,13 @@ extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateF
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView === emojiCollectionView {
+            // при одиночном выборе достаточно, система сама снимет выделение со старой
+        } else {
+            // то же для цветов
+        }
+    }
     
 }
 
