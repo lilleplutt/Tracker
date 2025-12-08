@@ -15,6 +15,7 @@ final class TrackerFormView: UIView {
     private var formTitle: String
     private var formCategory: String
     private var formSchedule: [Schedule]
+    private var bottomSpacerHeightConstraint: NSLayoutConstraint?
     
     // MARK: - Views
     private lazy var scrollView: UIScrollView = {
@@ -59,6 +60,14 @@ final class TrackerFormView: UIView {
         return view
     }()
     
+    private lazy var emojiCollectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = .clear
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        return collectionView
+    }()
+    
     // MARK: - Initializer
     init(title: String, category: String, schedule: [Schedule]) {
         self.formTitle = title
@@ -86,7 +95,12 @@ final class TrackerFormView: UIView {
         setupConstraints()
     }
     
-    private var bottomSpacerHeightConstraint: NSLayoutConstraint?
+    private func setUpEmojiCollectionView() {
+        emojiCollectionView.dataSource = self
+        emojiCollectionView.delegate = self
+        emojiCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.identifier)
+        contentStackView.addArrangedSubview(emojiCollectionView)
+    }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
