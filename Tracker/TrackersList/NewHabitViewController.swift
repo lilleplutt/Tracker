@@ -141,25 +141,33 @@ extension NewHabitViewController: TrackerFormViewDelegate {
         formTitle = text
         updateCreateButtonState()
     }
-    
+
     func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView) {
         print("Категория tapped")
     }
-    
+
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
         let scheduleVC = ScheduleViewController()
         let scheduleIndices = Set(formSchedule.map { $0.weekday })
         scheduleVC.selectedDays = scheduleIndices
-        
+
         scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
             guard let self = self else { return }
             self.selectedScheduleDays = selectedDays
             self.scheduleText = scheduleText
-            
+
             self.formSchedule = selectedDays.map { Schedule(weekday: $0) }
             self.formView.updateSchedule(self.formSchedule)
             self.updateCreateButtonState()
         }
         navigationController?.pushViewController(scheduleVC, animated: true)
+    }
+
+    func trackerFormView(_ view: TrackerFormView, didSelectEmoji emoji: String) {
+        formEmoji = emoji
+    }
+
+    func trackerFormView(_ view: TrackerFormView, didSelectColor color: UIColor) {
+        formColor = color
     }
 }

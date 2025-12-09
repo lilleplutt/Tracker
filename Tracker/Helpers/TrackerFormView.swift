@@ -4,6 +4,8 @@ protocol TrackerFormViewDelegate: AnyObject {
     func trackerFormView(_ view: TrackerFormView, didChangeTitle text: String)
     func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView)
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView)
+    func trackerFormView(_ view: TrackerFormView, didSelectEmoji emoji: String)
+    func trackerFormView(_ view: TrackerFormView, didSelectColor color: UIColor)
 }
 
 final class TrackerFormView: UIView {
@@ -37,7 +39,7 @@ final class TrackerFormView: UIView {
     }()
     
     private lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleInputView, categoryOptionView, scheduleOptionView, emojiCollectionView, colorCollectionView, bottomSpacerView])
+        let stackView = UIStackView(arrangedSubviews: [titleInputView, categoryOptionView, scheduleOptionView, bottomSpacerView])
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.alignment = .fill
@@ -63,14 +65,32 @@ final class TrackerFormView: UIView {
         view.delegate = self
         return view
     }()
-    
+
+    private lazy var emojiTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Emoji"
+        label.font = .systemFont(ofSize: 19, weight: .bold)
+        label.textColor = .ypBlackIOS
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private lazy var emojiCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
         return collectionView
     }()
-    
+
+    private lazy var colorTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Цвет"
+        label.font = .systemFont(ofSize: 19, weight: .bold)
+        label.textColor = .ypBlackIOS
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
     private lazy var colorCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -115,8 +135,25 @@ final class TrackerFormView: UIView {
         emojiCollectionView.register(EmojiCollectionViewCell.self, forCellWithReuseIdentifier: EmojiCollectionViewCell.reuseIdentifier)
         emojiCollectionView.allowsMultipleSelection = false
         emojiCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        emojiCollectionView.heightAnchor.constraint(equalToConstant: 204).isActive = true
-        contentStackView.addArrangedSubview(emojiCollectionView)
+
+        let emojiContainer = UIView()
+        emojiContainer.translatesAutoresizingMaskIntoConstraints = false
+        emojiContainer.addSubview(emojiTitleLabel)
+        emojiContainer.addSubview(emojiCollectionView)
+
+        NSLayoutConstraint.activate([
+            emojiTitleLabel.topAnchor.constraint(equalTo: emojiContainer.topAnchor, constant: 24),
+            emojiTitleLabel.leadingAnchor.constraint(equalTo: emojiContainer.leadingAnchor, constant: 28),
+            emojiTitleLabel.trailingAnchor.constraint(equalTo: emojiContainer.trailingAnchor, constant: -28),
+
+            emojiCollectionView.topAnchor.constraint(equalTo: emojiTitleLabel.bottomAnchor),
+            emojiCollectionView.leadingAnchor.constraint(equalTo: emojiContainer.leadingAnchor),
+            emojiCollectionView.trailingAnchor.constraint(equalTo: emojiContainer.trailingAnchor),
+            emojiCollectionView.bottomAnchor.constraint(equalTo: emojiContainer.bottomAnchor),
+            emojiCollectionView.heightAnchor.constraint(equalToConstant: 204)
+        ])
+
+        contentStackView.addArrangedSubview(emojiContainer)
     }
     
     private func setUpColorCollectionView() {
@@ -125,8 +162,25 @@ final class TrackerFormView: UIView {
         colorCollectionView.register(ColorCollectionViewCell.self, forCellWithReuseIdentifier: ColorCollectionViewCell.reuseIdentifier)
         colorCollectionView.allowsMultipleSelection = false
         colorCollectionView.translatesAutoresizingMaskIntoConstraints = false
-        colorCollectionView.heightAnchor.constraint(equalToConstant: 204).isActive = true
-        contentStackView.addArrangedSubview(colorCollectionView)
+
+        let colorContainer = UIView()
+        colorContainer.translatesAutoresizingMaskIntoConstraints = false
+        colorContainer.addSubview(colorTitleLabel)
+        colorContainer.addSubview(colorCollectionView)
+
+        NSLayoutConstraint.activate([
+            colorTitleLabel.topAnchor.constraint(equalTo: colorContainer.topAnchor, constant: 16),
+            colorTitleLabel.leadingAnchor.constraint(equalTo: colorContainer.leadingAnchor, constant: 28),
+            colorTitleLabel.trailingAnchor.constraint(equalTo: colorContainer.trailingAnchor, constant: -28),
+
+            colorCollectionView.topAnchor.constraint(equalTo: colorTitleLabel.bottomAnchor),
+            colorCollectionView.leadingAnchor.constraint(equalTo: colorContainer.leadingAnchor),
+            colorCollectionView.trailingAnchor.constraint(equalTo: colorContainer.trailingAnchor),
+            colorCollectionView.bottomAnchor.constraint(equalTo: colorContainer.bottomAnchor),
+            colorCollectionView.heightAnchor.constraint(equalToConstant: 204)
+        ])
+
+        contentStackView.addArrangedSubview(colorContainer)
     }
     
     private func setupConstraints() {
@@ -204,7 +258,6 @@ extension TrackerFormView: UICollectionViewDataSource {
             ) as? EmojiCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let emoji = emojis[indexPath.item]
             cell.configure(emoji: emojis[indexPath.item])
             cell.isSelected = (indexPath == selectedEmojiIndex)
             return cell
@@ -215,7 +268,6 @@ extension TrackerFormView: UICollectionViewDataSource {
             ) as? ColorCollectionViewCell else {
                 return UICollectionViewCell()
             }
-            let color = colors[indexPath.item]
             cell.configure(color: colors[indexPath.item])
             cell.isSelected = (indexPath == selectedColorIndex)
             return cell
@@ -228,11 +280,17 @@ extension TrackerFormView: UICollectionViewDataSource {
             selectedEmojiIndex = indexPath
             if let prev { collectionView.reloadItems(at: [prev]) }
             collectionView.reloadItems(at: [indexPath])
+
+            let selectedEmoji = emojis[indexPath.item]
+            delegate?.trackerFormView(self, didSelectEmoji: selectedEmoji)
         } else {
             let prev = selectedColorIndex
             selectedColorIndex = indexPath
             if let prev { collectionView.reloadItems(at: [prev]) }
             collectionView.reloadItems(at: [indexPath])
+
+            let selectedColor = colors[indexPath.item]
+            delegate?.trackerFormView(self, didSelectColor: selectedColor)
         }
     }
 }
