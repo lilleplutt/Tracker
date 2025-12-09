@@ -79,6 +79,7 @@ final class TrackerFormView: UIView {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
+        collectionView.isScrollEnabled = false
         return collectionView
     }()
 
@@ -95,6 +96,7 @@ final class TrackerFormView: UIView {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .clear
+        collectionView.isScrollEnabled = false
         return collectionView
     }()
     
@@ -123,8 +125,8 @@ final class TrackerFormView: UIView {
     // MARK: - Private Methods
     private func setupUI() {
         addSubview(scrollView)
-        setUpColorCollectionView()
         setUpEmojiCollectionView()
+        setUpColorCollectionView()
         scrollView.addSubview(contentStackView)
         setupConstraints()
     }
