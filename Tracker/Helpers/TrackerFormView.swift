@@ -19,7 +19,7 @@ final class TrackerFormView: UIView {
     private var formSchedule: [Schedule]
     private var bottomSpacerHeightConstraint: NSLayoutConstraint?
     private var selectedEmojiIndex: IndexPath?
-    private var selectedColorIndex: IndexPath
+    private var selectedColorIndex: IndexPath?
     
     // MARK: - Views
     private lazy var scrollView: UIScrollView = {
@@ -37,7 +37,7 @@ final class TrackerFormView: UIView {
     }()
     
     private lazy var contentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [titleInputView, categoryOptionView, scheduleOptionView, bottomSpacerView])
+        let stackView = UIStackView(arrangedSubviews: [titleInputView, categoryOptionView, scheduleOptionView, emojiCollectionView, colorCollectionView, bottomSpacerView])
         stackView.axis = .vertical
         stackView.spacing = 0
         stackView.alignment = .fill
@@ -187,7 +187,7 @@ extension TrackerFormView: TrackerOptionViewDelegate {
 }
 
 //MARK: - CollectionView
-extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension TrackerFormView: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView === emojiCollectionView {
             return emojis.count
@@ -235,6 +235,30 @@ extension TrackerFormView: UICollectionViewDataSource, UICollectionViewDelegateF
             collectionView.reloadItems(at: [indexPath])
         }
     }
-    
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
+extension TrackerFormView: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let columns = collectionView === emojiCollectionView ? 6 : 6
+        let spacing: CGFloat = 5
+        let insets = UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
+        let totalSpacing = insets.left + insets.right + spacing * CGFloat(columns - 1)
+        let availableWidth = collectionView.bounds.width - totalSpacing
+        let side = floor(availableWidth / CGFloat(columns))
+        return CGSize(width: side, height: side)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat { //отступы между ячейками в строке
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat { //отступы между строками
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: 12, left: 16, bottom: 12, right: 16)
+    }
+    
+}
