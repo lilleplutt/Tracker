@@ -1,7 +1,21 @@
 import UIKit
+import CoreData
 
 final class TrackersViewController: UIViewController {
-    
+
+    // MARK: - Properties
+    private let context: NSManagedObjectContext
+
+    // MARK: - Initializers
+    init(context: NSManagedObjectContext) {
+        self.context = context
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - UI Elements
     private lazy var plusButton: UIButton = {
         let button = UIButton.systemButton(
