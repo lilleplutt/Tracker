@@ -15,7 +15,7 @@ final class ColorCollectionViewCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             contentView.layer.borderWidth = isSelected ? 3 : 0
-            contentView.layer.borderColor = isSelected ? UIColor.ypBlackIOS.cgColor : nil
+            contentView.layer.borderColor = isSelected ? colorView.backgroundColor?.withAlphaComponent(0.3).cgColor : nil
             contentView.layer.cornerRadius = 16
         }
     }
