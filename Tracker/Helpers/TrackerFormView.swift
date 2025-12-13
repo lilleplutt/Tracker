@@ -124,15 +124,17 @@ final class TrackerFormView: UIView {
 
     func selectEmoji(_ emoji: String) {
         if let index = emojis.firstIndex(of: emoji) {
-            selectedEmojiIndex = IndexPath(item: index, section: 0)
-            emojiCollectionView.reloadData()
+            let indexPath = IndexPath(item: index, section: 0)
+            selectedEmojiIndex = indexPath
+            emojiCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
         }
     }
 
     func selectColor(_ color: UIColor) {
         if let index = colors.firstIndex(of: color) {
-            selectedColorIndex = IndexPath(item: index, section: 0)
-            colorCollectionView.reloadData()
+            let indexPath = IndexPath(item: index, section: 0)
+            selectedColorIndex = indexPath
+            colorCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
         }
     }
     
@@ -275,7 +277,6 @@ extension TrackerFormView: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             cell.configure(emoji: emojis[indexPath.item])
-            cell.isSelected = (indexPath == selectedEmojiIndex)
             return cell
         } else {
             guard let cell = collectionView.dequeueReusableCell(
@@ -285,25 +286,24 @@ extension TrackerFormView: UICollectionViewDataSource {
                 return UICollectionViewCell()
             }
             cell.configure(color: colors[indexPath.item])
-            cell.isSelected = (indexPath == selectedColorIndex)
             return cell
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if collectionView === emojiCollectionView {
-            let prev = selectedEmojiIndex
+            if let prev = selectedEmojiIndex, prev != indexPath {
+                collectionView.deselectItem(at: prev, animated: false)
+            }
             selectedEmojiIndex = indexPath
-            if let prev { collectionView.reloadItems(at: [prev]) }
-            collectionView.reloadItems(at: [indexPath])
 
             let selectedEmoji = emojis[indexPath.item]
             delegate?.trackerFormView(self, didSelectEmoji: selectedEmoji)
         } else {
-            let prev = selectedColorIndex
+            if let prev = selectedColorIndex, prev != indexPath {
+                collectionView.deselectItem(at: prev, animated: false)
+            }
             selectedColorIndex = indexPath
-            if let prev { collectionView.reloadItems(at: [prev]) }
-            collectionView.reloadItems(at: [indexPath])
 
             let selectedColor = colors[indexPath.item]
             delegate?.trackerFormView(self, didSelectColor: selectedColor)
