@@ -1,20 +1,17 @@
 import UIKit
-import CoreData
 
 final class TrackersViewController: UIViewController {
 
     // MARK: - Properties
-    private let context: NSManagedObjectContext
     private let trackerStore: TrackerStore
     private let categoryStore: TrackerCategoryStore
     private let recordStore: TrackerRecordStore
 
     // MARK: - Initializers
-    init(context: NSManagedObjectContext) {
-        self.context = context
-        self.trackerStore = TrackerStore(context: context)
-        self.categoryStore = TrackerCategoryStore(context: context)
-        self.recordStore = TrackerRecordStore(context: context)
+    init() {
+        self.trackerStore = TrackerStore()
+        self.categoryStore = TrackerCategoryStore()
+        self.recordStore = TrackerRecordStore()
         super.init(nibName: nil, bundle: nil)
     }
 

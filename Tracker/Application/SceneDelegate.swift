@@ -10,8 +10,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         self.window = window
 
-        let context = CoreDataStack.shared.context
-        let tabBarController = TabBarController(context: context)
+        let tabBarController = TabBarController()
 
         window.rootViewController = tabBarController
         window.makeKeyAndVisible()
