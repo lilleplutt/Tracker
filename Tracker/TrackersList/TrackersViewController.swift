@@ -1,7 +1,24 @@
 import UIKit
 
 final class TrackersViewController: UIViewController {
-    
+
+    // MARK: - Properties
+    private let trackerStore: TrackerStore
+    private let categoryStore: TrackerCategoryStore
+    private let recordStore: TrackerRecordStore
+
+    // MARK: - Initializers
+    init() {
+        self.trackerStore = TrackerStore()
+        self.categoryStore = TrackerCategoryStore()
+        self.recordStore = TrackerRecordStore()
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     // MARK: - UI Elements
     private lazy var plusButton: UIButton = {
         let button = UIButton.systemButton(
@@ -95,9 +112,11 @@ final class TrackersViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupUI()
         setupConstraints()
+        setupStores()
+        loadDataFromCoreData()
         updateStubVisibility()
     }
     
@@ -200,25 +219,49 @@ final class TrackersViewController: UIViewController {
         updateStubVisibility()
     }
     
-    private func addNewTracker(_ tracker: Tracker) {
-        if categories.isEmpty {
-            let category = TrackerCategory(
-                title: "Важное",
-                trackers: [tracker]
-            )
-            categories.append(category)
-        } else {
-            let existingCategory = categories[0]
-            var updatedTrackers = existingCategory.trackers
-            updatedTrackers.append(tracker)
-            categories[0] = TrackerCategory(
-                title: existingCategory.title,
-                trackers: updatedTrackers
-            )
-        }
-        
+    private func setupStores() {
+        trackerStore.delegate = self
+        categoryStore.delegate = self
+        recordStore.delegate = self
+    }
+
+    private func loadDataFromCoreData() {
+        let coreDataCategories = categoryStore.categories
+        categories = coreDataCategories.compactMap { $0.toTrackerCategory() }
+
+        let coreDataRecords = recordStore.records
+        completedTrackers = Set(coreDataRecords.compactMap { $0.toTrackerRecord() })
+
         collectionView.reloadData()
-        updateStubVisibility()
+    }
+
+    private func addNewTracker(_ tracker: Tracker) {
+        do {
+            var category = categoryStore.fetchCategory(by: "Важное")
+            if category == nil {
+                category = try categoryStore.addCategory(title: "Важное")
+            }
+
+            guard let category = category,
+                  let colorHex = tracker.color.toHex() else {
+                return
+            }
+
+            let scheduleString = tracker.schedule.toString()
+            try trackerStore.addTracker(
+                id: tracker.id,
+                title: tracker.title,
+                emoji: tracker.emoji,
+                colorHex: colorHex,
+                schedule: scheduleString,
+                category: category
+            )
+
+            loadDataFromCoreData()
+            updateStubVisibility()
+        } catch {
+            print("Error saving tracker: \(error)")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -386,25 +429,32 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
         if calendar.compare(currentDate, to: Date(), toGranularity: .day) == .orderedDescending {
             return
         }
-        
+
         if let indexPath = collectionView.indexPath(for: cell) {
             let filteredCategories = getFilteredTrackers()
             let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
-            
+
             let normalizedDate = calendar.startOfDay(for: currentDate)
-            let record = TrackerRecord(trackerId: tracker.id, date: normalizedDate)
-            
-            if isCompleted(id: tracker.id, date: currentDate) {
-                if let recordToRemove = completedTrackers.first(where: { existingRecord in
-                    existingRecord.trackerId == tracker.id && calendar.isDate(existingRecord.date, inSameDayAs: normalizedDate)
-                }) {
-                    completedTrackers.remove(recordToRemove)
+
+            do {
+                if isCompleted(id: tracker.id, date: currentDate) {
+                    try recordStore.deleteRecord(trackerId: tracker.id, date: normalizedDate)
+
+                    if let recordToRemove = completedTrackers.first(where: { existingRecord in
+                        existingRecord.trackerId == tracker.id && calendar.isDate(existingRecord.date, inSameDayAs: normalizedDate)
+                    }) {
+                        completedTrackers.remove(recordToRemove)
+                    }
+                } else {
+                    try recordStore.addRecord(trackerId: tracker.id, date: normalizedDate)
+                    let record = TrackerRecord(trackerId: tracker.id, date: normalizedDate)
+                    completedTrackers.insert(record)
                 }
-            } else {
-                completedTrackers.insert(record)
+
+                collectionView.reloadItems(at: [indexPath])
+            } catch {
+                print("Error updating tracker record: \(error)")
             }
-            
-            collectionView.reloadItems(at: [indexPath])
         }
     }
 }
@@ -413,6 +463,27 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         collectionView.reloadData()
+    }
+}
+
+// MARK: - Store Delegates
+extension TrackersViewController: TrackerStoreDelegate {
+    func trackerStoreDidUpdate() {
+        loadDataFromCoreData()
+        updateStubVisibility()
+    }
+}
+
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func trackerCategoryStoreDidUpdate() {
+        loadDataFromCoreData()
+        updateStubVisibility()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func trackerRecordStoreDidUpdate() {
+        loadDataFromCoreData()
     }
 }
 
