@@ -15,7 +15,6 @@ final class TrackerStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCoreData> = {
         let fetchRequest = TrackerCoreData.fetchRequest()
 
-        // Сортируем трекеры по названию
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "title", ascending: true)
         ]
@@ -29,7 +28,6 @@ final class TrackerStore: NSObject {
 
         controller.delegate = self
 
-        // Выполняем первоначальную загрузку данных
         try? controller.performFetch()
 
         return controller
@@ -42,13 +40,10 @@ final class TrackerStore: NSObject {
     }
 
     // MARK: - Public Methods
-
-    /// Получить все трекеры
     var trackers: [TrackerCoreData] {
         return fetchedResultsController.fetchedObjects ?? []
     }
 
-    /// Добавить новый трекер
     func addTracker(id: UUID, title: String, emoji: String, colorHex: String, schedule: String, category: TrackerCategoryCoreData) throws {
         let tracker = TrackerCoreData(context: context)
         tracker.id = id
@@ -61,18 +56,15 @@ final class TrackerStore: NSObject {
         try context.save()
     }
 
-    /// Удалить трекер
     func deleteTracker(_ tracker: TrackerCoreData) throws {
         context.delete(tracker)
         try context.save()
     }
 
-    /// Обновить трекер
     func updateTracker(_ tracker: TrackerCoreData) throws {
         try context.save()
     }
 
-    /// Получить трекер по ID
     func fetchTracker(by id: UUID) -> TrackerCoreData? {
         let fetchRequest = TrackerCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
@@ -85,7 +77,6 @@ final class TrackerStore: NSObject {
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        // Уведомляем делегата об изменениях в данных
         delegate?.trackerStoreDidUpdate()
     }
 }

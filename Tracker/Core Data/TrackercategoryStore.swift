@@ -15,7 +15,6 @@ final class TrackerCategoryStore: NSObject {
     private lazy var fetchedResultsController: NSFetchedResultsController<TrackerCategoryCoreData> = {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
 
-        // Сортируем категории по названию
         fetchRequest.sortDescriptors = [
             NSSortDescriptor(key: "title", ascending: true)
         ]
@@ -29,7 +28,6 @@ final class TrackerCategoryStore: NSObject {
 
         controller.delegate = self
 
-        // Выполняем первоначальную загрузку данных
         try? controller.performFetch()
 
         return controller
@@ -42,13 +40,10 @@ final class TrackerCategoryStore: NSObject {
     }
 
     // MARK: - Public Methods
-
-    /// Получить все категории
     var categories: [TrackerCategoryCoreData] {
         return fetchedResultsController.fetchedObjects ?? []
     }
 
-    /// Добавить новую категорию
     func addCategory(title: String) throws -> TrackerCategoryCoreData {
         let category = TrackerCategoryCoreData(context: context)
         category.title = title
@@ -58,19 +53,16 @@ final class TrackerCategoryStore: NSObject {
         return category
     }
 
-    /// Удалить категорию
     func deleteCategory(_ category: TrackerCategoryCoreData) throws {
         context.delete(category)
         try context.save()
     }
 
-    /// Обновить категорию
     func updateCategory(_ category: TrackerCategoryCoreData, newTitle: String) throws {
         category.title = newTitle
         try context.save()
     }
 
-    /// Получить категорию по названию
     func fetchCategory(by title: String) -> TrackerCategoryCoreData? {
         let fetchRequest = TrackerCategoryCoreData.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "title == %@", title)
@@ -79,12 +71,10 @@ final class TrackerCategoryStore: NSObject {
         return try? context.fetch(fetchRequest).first
     }
 
-    /// Получить количество категорий
     var numberOfCategories: Int {
         return fetchedResultsController.fetchedObjects?.count ?? 0
     }
 
-    /// Получить категорию по индексу
     func category(at index: Int) -> TrackerCategoryCoreData? {
         guard let categories = fetchedResultsController.fetchedObjects,
               index < categories.count else {
@@ -97,7 +87,6 @@ final class TrackerCategoryStore: NSObject {
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        // Уведомляем делегата об изменениях в данных
         delegate?.trackerCategoryStoreDidUpdate()
     }
 }

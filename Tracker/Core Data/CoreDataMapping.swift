@@ -1,9 +1,8 @@
 import UIKit
 import CoreData
 
-// MARK: - TrackerCoreData Mapping
+// MARK: - Mapping
 extension TrackerCoreData {
-    /// Конвертация Core Data модели в UI модель
     func toTracker() -> Tracker? {
         guard let id = id,
               let title = title,
@@ -26,9 +25,7 @@ extension TrackerCoreData {
     }
 }
 
-// MARK: - TrackerCategoryCoreData Mapping
 extension TrackerCategoryCoreData {
-    /// Конвертация Core Data модели в UI модель
     func toTrackerCategory() -> TrackerCategory? {
         guard let title = title else { return nil }
 
@@ -42,9 +39,7 @@ extension TrackerCategoryCoreData {
     }
 }
 
-// MARK: - TrackerRecordCoreData Mapping
 extension TrackerRecordCoreData {
-    /// Конвертация Core Data модели в UI модель
     func toTrackerRecord() -> TrackerRecord? {
         guard let trackerId = trackerId,
               let date = date else {
@@ -55,9 +50,8 @@ extension TrackerRecordCoreData {
     }
 }
 
-// MARK: - UIColor Hex Extension
+// MARK: - UIColor 
 extension UIColor {
-    /// Инициализация UIColor из hex строки
     convenience init?(hex: String) {
         let r, g, b: CGFloat
 
@@ -79,7 +73,6 @@ extension UIColor {
         }
     }
 
-    /// Конвертация UIColor в hex строку
     func toHex() -> String? {
         guard let components = cgColor.components, components.count >= 3 else {
             return nil
@@ -96,9 +89,8 @@ extension UIColor {
     }
 }
 
-// MARK: - Schedule Extension
+// MARK: - Schedule
 extension Array where Element == Schedule {
-    /// Конвертация массива Schedule в строку для хранения
     func toString() -> String {
         return self.map { String($0.weekday) }.joined(separator: ",")
     }

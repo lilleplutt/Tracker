@@ -226,11 +226,9 @@ final class TrackersViewController: UIViewController {
     }
 
     private func loadDataFromCoreData() {
-        // Загружаем категории из Core Data
         let coreDataCategories = categoryStore.categories
         categories = coreDataCategories.compactMap { $0.toTrackerCategory() }
 
-        // Загружаем записи о выполнении
         let coreDataRecords = recordStore.records
         completedTrackers = Set(coreDataRecords.compactMap { $0.toTrackerRecord() })
 
@@ -239,7 +237,6 @@ final class TrackersViewController: UIViewController {
 
     private func addNewTracker(_ tracker: Tracker) {
         do {
-            // Получаем или создаем категорию "Важное"
             var category = categoryStore.fetchCategory(by: "Важное")
             if category == nil {
                 category = try categoryStore.addCategory(title: "Важное")
@@ -250,7 +247,6 @@ final class TrackersViewController: UIViewController {
                 return
             }
 
-            // Сохраняем трекер в Core Data
             let scheduleString = tracker.schedule.toString()
             try trackerStore.addTracker(
                 id: tracker.id,
@@ -261,7 +257,6 @@ final class TrackersViewController: UIViewController {
                 category: category
             )
 
-            // Обновляем UI
             loadDataFromCoreData()
             updateStubVisibility()
         } catch {
@@ -443,20 +438,15 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 
             do {
                 if isCompleted(id: tracker.id, date: currentDate) {
-                    // Удаляем запись из Core Data
                     try recordStore.deleteRecord(trackerId: tracker.id, date: normalizedDate)
 
-                    // Удаляем из локального хранилища
                     if let recordToRemove = completedTrackers.first(where: { existingRecord in
                         existingRecord.trackerId == tracker.id && calendar.isDate(existingRecord.date, inSameDayAs: normalizedDate)
                     }) {
                         completedTrackers.remove(recordToRemove)
                     }
                 } else {
-                    // Добавляем запись в Core Data
                     try recordStore.addRecord(trackerId: tracker.id, date: normalizedDate)
-
-                    // Добавляем в локальное хранилище
                     let record = TrackerRecord(trackerId: tracker.id, date: normalizedDate)
                     completedTrackers.insert(record)
                 }
