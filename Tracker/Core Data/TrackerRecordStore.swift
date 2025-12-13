@@ -108,3 +108,15 @@ extension TrackerRecordStore: NSFetchedResultsControllerDelegate {
         delegate?.trackerRecordStoreDidUpdate()
     }
 }
+
+// MARK: - TrackerRecordCoreData Mapping
+extension TrackerRecordCoreData {
+    func toTrackerRecord() -> TrackerRecord? {
+        guard let trackerId = trackerId,
+              let date = date else {
+            return nil
+        }
+
+        return TrackerRecord(trackerId: trackerId, date: date)
+    }
+}

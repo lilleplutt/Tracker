@@ -90,3 +90,18 @@ extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
         delegate?.trackerCategoryStoreDidUpdate()
     }
 }
+
+// MARK: - TrackerCategoryCoreData Mapping
+extension TrackerCategoryCoreData {
+    func toTrackerCategory() -> TrackerCategory? {
+        guard let title = title else { return nil }
+
+        let trackersArray = (trackers as? Set<TrackerCoreData>) ?? []
+        let convertedTrackers = trackersArray.compactMap { $0.toTracker() }
+
+        return TrackerCategory(
+            title: title,
+            trackers: convertedTrackers
+        )
+    }
+}

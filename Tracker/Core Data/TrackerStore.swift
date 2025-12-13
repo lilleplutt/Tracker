@@ -80,3 +80,27 @@ extension TrackerStore: NSFetchedResultsControllerDelegate {
         delegate?.trackerStoreDidUpdate()
     }
 }
+
+// MARK: - TrackerCoreData Mapping
+extension TrackerCoreData {
+    func toTracker() -> Tracker? {
+        guard let id = id,
+              let title = title,
+              let emoji = emoji,
+              let colorHex = colorHex,
+              let scheduleData = scheduleData else {
+            return nil
+        }
+
+        let color = UIColor(hex: colorHex) ?? .ypRedIOS
+        let schedule = scheduleData.split(separator: ",").compactMap { Int($0) }.map { Schedule(weekday: $0) }
+
+        return Tracker(
+            id: id,
+            title: title,
+            color: color,
+            emoji: emoji,
+            schedule: schedule
+        )
+    }
+}

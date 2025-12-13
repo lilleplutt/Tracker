@@ -121,6 +121,20 @@ final class TrackerFormView: UIView {
         formSchedule = schedule
         updateDisplayedData()
     }
+
+    func selectEmoji(_ emoji: String) {
+        if let index = emojis.firstIndex(of: emoji) {
+            selectedEmojiIndex = IndexPath(item: index, section: 0)
+            emojiCollectionView.reloadData()
+        }
+    }
+
+    func selectColor(_ color: UIColor) {
+        if let index = colors.firstIndex(of: color) {
+            selectedColorIndex = IndexPath(item: index, section: 0)
+            colorCollectionView.reloadData()
+        }
+    }
     
     // MARK: - Private Methods
     private func setupUI() {

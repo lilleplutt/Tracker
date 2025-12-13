@@ -69,6 +69,12 @@ final class NewHabitViewController: UIViewController {
         setupConstraints()
         setupActions()
         updateCreateButtonState()
+        setupInitialSelection()
+    }
+
+    private func setupInitialSelection() {
+        formView.selectEmoji(formEmoji)
+        formView.selectColor(formColor)
     }
     
     // MARK: - Private Methods
