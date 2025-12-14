@@ -2,7 +2,7 @@ import UIKit
 
 final class NewHabitViewController: UIViewController {
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     private var selectedScheduleDays: [Int] = []
     private var scheduleText: String = ""
     var onCreateTracker: ((Tracker) -> Void)?
@@ -10,6 +10,11 @@ final class NewHabitViewController: UIViewController {
     private var formTitle: String = ""
     private var formCategory: String = "Важное"
     private var formSchedule: [Schedule] = []
+    
+    private let emojis = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
+    private let colorNames = (1...18).map { "Color\($0)" }
+    private lazy var colors: [UIColor] = colorNames.compactMap { UIColor(named: $0) }
+    
     private var formEmoji: String = "😭"
     private var formColor: UIColor = .ypRedIOS
     
@@ -21,7 +26,9 @@ final class NewHabitViewController: UIViewController {
         let view = TrackerFormView(
             title: formTitle,
             category: formCategory,
-            schedule: formSchedule
+            schedule: formSchedule,
+            emojis: emojis,
+            colors: colors
         )
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
@@ -62,6 +69,12 @@ final class NewHabitViewController: UIViewController {
         setupConstraints()
         setupActions()
         updateCreateButtonState()
+        setupInitialSelection()
+    }
+
+    private func setupInitialSelection() {
+        formView.selectEmoji(formEmoji)
+        formView.selectColor(formColor)
     }
     
     // MARK: - Private Methods
@@ -134,25 +147,33 @@ extension NewHabitViewController: TrackerFormViewDelegate {
         formTitle = text
         updateCreateButtonState()
     }
-    
+
     func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView) {
         print("Категория tapped")
     }
-    
+
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
         let scheduleVC = ScheduleViewController()
         let scheduleIndices = Set(formSchedule.map { $0.weekday })
         scheduleVC.selectedDays = scheduleIndices
-        
+
         scheduleVC.onScheduleSelected = { [weak self] selectedDays, scheduleText in
             guard let self = self else { return }
             self.selectedScheduleDays = selectedDays
             self.scheduleText = scheduleText
-            
+
             self.formSchedule = selectedDays.map { Schedule(weekday: $0) }
             self.formView.updateSchedule(self.formSchedule)
             self.updateCreateButtonState()
         }
         navigationController?.pushViewController(scheduleVC, animated: true)
+    }
+
+    func trackerFormView(_ view: TrackerFormView, didSelectEmoji emoji: String) {
+        formEmoji = emoji
+    }
+
+    func trackerFormView(_ view: TrackerFormView, didSelectColor color: UIColor) {
+        formColor = color
     }
 }
