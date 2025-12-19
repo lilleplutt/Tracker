@@ -57,7 +57,7 @@ final class PageTwoViewController: UIViewController {
             onboardingLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             onboardingLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             onboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            onboardingLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 432),
+            onboardingLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 476),
             
             onboardingButton.topAnchor.constraint(equalTo: onboardingLabel.bottomAnchor, constant: 160),
             onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
