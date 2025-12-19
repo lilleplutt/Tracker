@@ -13,6 +13,7 @@ final class PageOneViewController: UIViewController {
     private lazy var onboardingLabel: UILabel = {
         let label = UILabel()
         label.text = "Отслеживайте только то, что хотите"
+        label.numberOfLines = 2
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.textAlignment = .center
@@ -56,7 +57,7 @@ final class PageOneViewController: UIViewController {
             onboardingLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             onboardingLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             onboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            onboardingLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            onboardingLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 432),
             
             onboardingButton.topAnchor.constraint(equalTo: onboardingLabel.bottomAnchor, constant: 160),
             onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
