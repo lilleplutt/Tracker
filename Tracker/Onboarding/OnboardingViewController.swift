@@ -4,11 +4,8 @@ final class OnboardingViewController: UIPageViewController {
     
     //MARK: - Properties
     lazy var pages: [UIViewController] = {
-        let pageOne = UIViewController()
-        pageOne.view.backgroundColor = .red
-        
-        let pageTwo = UIViewController()
-        pageTwo.view.backgroundColor = .green
+        let pageOne = PageOneViewController()
+        let pageTwo = PageTwoViewController()
         
         return [pageOne, pageTwo]
     }()

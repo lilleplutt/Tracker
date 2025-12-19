@@ -1,5 +1,5 @@
 import UIKit
 
-final class PageTwoViewController: UIPageViewController {
+final class PageTwoViewController: UIViewController {
     
 }

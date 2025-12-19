@@ -1,5 +1,5 @@
 import UIKit
 
-final class PageOneViewController: UIPageViewController {
+final class PageOneViewController: UIViewController {
     
 }
