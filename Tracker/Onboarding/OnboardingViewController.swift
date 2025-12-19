@@ -40,7 +40,7 @@ final class OnboardingViewController: UIPageViewController {
         view.addSubview(pageControl)
         
         NSLayoutConstraint.activate([
-            pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 594),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
