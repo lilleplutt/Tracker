@@ -13,15 +13,39 @@ final class OnboardingViewController: UIPageViewController {
         return [pageOne, pageTwo]
     }()
     
+    lazy var pageControl: UIPageControl = {
+        let pageControl = UIPageControl()
+        pageControl.numberOfPages = pages.count
+        pageControl.currentPage = 0
+        
+        pageControl.currentPageIndicatorTintColor = .brown
+        pageControl.pageIndicatorTintColor = .orange
+        
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
+        return pageControl
+    }()
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         dataSource = self
+        delegate = self
         
         if let first = pages.first {
             setViewControllers([first], direction: .forward, animated: true, completion: nil)
         }
+        
+        setUpPageControl()
+    }
+    
+    private func setUpPageControl() {
+        view.addSubview(pageControl)
+        
+        NSLayoutConstraint.activate([
+            pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+        ])
     }
 }
 
@@ -50,6 +74,15 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         
         return pages[nextIndex]
     }
-    
-    
+}
+
+//MARK: - UIPageViewControllerDelegate
+extension OnboardingViewController: UIPageViewControllerDelegate {
+    func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+        
+        if let currentViewController = pageViewController.viewControllers?.first,
+           let currentIndex = pages.firstIndex(of: currentViewController) {
+            pageControl.currentPage = currentIndex
+        }
+    }
 }
