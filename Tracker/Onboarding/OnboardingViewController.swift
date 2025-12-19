@@ -45,20 +45,21 @@ final class OnboardingViewController: UIPageViewController {
             setViewControllers([first], direction: .forward, animated: true, completion: nil)
         }
         
-        setUpPageControl()
+        setUpUI()
     }
     
-    private func setUpPageControl() {
+    private func setUpUI() {
         view.addSubview(pageControl)
         view.addSubview(onboardingButton)
         
         NSLayoutConstraint.activate([
-            pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 594),
+            pageControl.bottomAnchor.constraint(equalTo: onboardingButton.topAnchor, constant: 24),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             onboardingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            onboardingButton.heightAnchor.constraint(equalToConstant: 60)
+            onboardingButton.heightAnchor.constraint(equalToConstant: 60),
+            onboardingButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 712)
         ])
     }
 }
