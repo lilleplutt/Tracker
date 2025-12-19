@@ -47,7 +47,22 @@ final class PageOneViewController: UIViewController {
     }
     
     private func setupConstraints() {
-        
+        NSLayoutConstraint.activate([
+            onboardingImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            onboardingImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            onboardingImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            onboardingImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            onboardingLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            onboardingLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            onboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            onboardingLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            onboardingButton.topAnchor.constraint(equalTo: onboardingLabel.bottomAnchor, constant: 160),
+            onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            onboardingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            onboardingButton.heightAnchor.constraint(equalToConstant: 60)
+            ])
     }
     
 }
