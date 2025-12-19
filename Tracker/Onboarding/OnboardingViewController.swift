@@ -22,6 +22,18 @@ final class OnboardingViewController: UIPageViewController {
         return pageControl
     }()
     
+    private lazy var onboardingButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Вот это технологии!", for: .normal)
+        button.setTitleColor(.ypWhiteIOS, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.backgroundColor = .ypBlackIOS
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,10 +50,15 @@ final class OnboardingViewController: UIPageViewController {
     
     private func setUpPageControl() {
         view.addSubview(pageControl)
+        view.addSubview(onboardingButton)
         
         NSLayoutConstraint.activate([
             pageControl.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 594),
-            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            
+            onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            onboardingButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            onboardingButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
