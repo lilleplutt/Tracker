@@ -53,7 +53,7 @@ final class OnboardingViewController: UIPageViewController {
         view.addSubview(onboardingButton)
         
         NSLayoutConstraint.activate([
-            pageControl.bottomAnchor.constraint(equalTo: onboardingButton.topAnchor, constant: 24),
+            pageControl.bottomAnchor.constraint(equalTo: onboardingButton.topAnchor, constant: -24),
             pageControl.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
             onboardingButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
