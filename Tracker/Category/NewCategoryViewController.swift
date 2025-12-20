@@ -5,7 +5,7 @@ final class NewCategoryViewController: UIViewController {
     // MARK: - Properties
     var onCategoryCreated: ((String) -> Void)?
     private var categoryTitle: String = ""
-    private let isEditing: Bool
+    private let isEditingMode: Bool
 
     // MARK: - UI Elements
     private lazy var titleTextField: UITextField = {
@@ -44,7 +44,7 @@ final class NewCategoryViewController: UIViewController {
 
     // MARK: - Initializer
     init(initialTitle: String? = nil, isEditing: Bool = false) {
-        self.isEditing = isEditing
+        self.isEditingMode = isEditing
         super.init(nibName: nil, bundle: nil)
         if let initialTitle = initialTitle {
             self.categoryTitle = initialTitle
