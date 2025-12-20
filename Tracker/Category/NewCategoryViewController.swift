@@ -89,7 +89,7 @@ final class NewCategoryViewController: UIViewController {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            backgroundContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 24),
+            backgroundContainerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
             backgroundContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             backgroundContainerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             backgroundContainerView.heightAnchor.constraint(equalToConstant: 75),
