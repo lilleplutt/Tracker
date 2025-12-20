@@ -153,6 +153,7 @@ extension NewHabitViewController: TrackerFormViewDelegate {
             guard let self = self else { return }
             self.formCategory = selectedCategory
             self.formView.updateCategory(selectedCategory)
+            self.updateCreateButtonState()
         }
 
         navigationController?.pushViewController(categoryVC, animated: true)
@@ -177,9 +178,11 @@ extension NewHabitViewController: TrackerFormViewDelegate {
 
     func trackerFormView(_ view: TrackerFormView, didSelectEmoji emoji: String) {
         formEmoji = emoji
+        updateCreateButtonState()
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectColor color: UIColor) {
         formColor = color
+        updateCreateButtonState()
     }
 }
