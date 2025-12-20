@@ -5,10 +5,10 @@ final class NewHabitViewController: UIViewController {
     // MARK: - Private Properties
     private var selectedScheduleDays: [Int] = []
     private var scheduleText: String = ""
-    var onCreateTracker: ((Tracker) -> Void)?
+    var onCreateTracker: ((Tracker, String) -> Void)?
 
     private var formTitle: String = ""
-    private var formCategory: String = "Важное"
+    private var formCategory: String = ""
     private var formSchedule: [Schedule] = []
     
     private let emojis = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
@@ -19,7 +19,7 @@ final class NewHabitViewController: UIViewController {
     private var formColor: UIColor = .ypRedIOS
     
     private var isFormReady: Bool {
-        !formTitle.isEmpty && !formSchedule.isEmpty
+        !formTitle.isEmpty && !formSchedule.isEmpty && !formCategory.isEmpty
     }
     
     private lazy var formView: TrackerFormView = {
@@ -121,8 +121,8 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
-        guard !formTitle.isEmpty else { return }
-        
+        guard !formTitle.isEmpty, !formCategory.isEmpty else { return }
+
         let tracker = Tracker(
             id: UUID(),
             title: formTitle,
@@ -130,8 +130,8 @@ final class NewHabitViewController: UIViewController {
             emoji: formEmoji,
             schedule: formSchedule
         )
-        
-        onCreateTracker?(tracker)
+
+        onCreateTracker?(tracker, formCategory)
         dismiss(animated: true)
     }
     
@@ -149,7 +149,16 @@ extension NewHabitViewController: TrackerFormViewDelegate {
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView) {
-        print("Категория tapped")
+        let viewModel = CategoryViewModel(selectedCategory: formCategory)
+        let categoryVC = CategoryViewController(viewModel: viewModel)
+
+        categoryVC.onCategorySelected = { [weak self] selectedCategory in
+            guard let self = self else { return }
+            self.formCategory = selectedCategory
+            self.formView.updateCategory(selectedCategory)
+        }
+
+        navigationController?.pushViewController(categoryVC, animated: true)
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
