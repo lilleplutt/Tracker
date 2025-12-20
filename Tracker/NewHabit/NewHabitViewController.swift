@@ -15,11 +15,11 @@ final class NewHabitViewController: UIViewController {
     private let colorNames = (1...18).map { "Color\($0)" }
     private lazy var colors: [UIColor] = colorNames.compactMap { UIColor(named: $0) }
     
-    private var formEmoji: String = "😭"
-    private var formColor: UIColor = .ypRedIOS
-    
+    private var formEmoji: String?
+    private var formColor: UIColor?
+
     private var isFormReady: Bool {
-        !formTitle.isEmpty && !formSchedule.isEmpty && !formCategory.isEmpty
+        !formTitle.isEmpty && !formSchedule.isEmpty && !formCategory.isEmpty && formEmoji != nil && formColor != nil
     }
     
     private lazy var formView: TrackerFormView = {
@@ -69,12 +69,6 @@ final class NewHabitViewController: UIViewController {
         setupConstraints()
         setupActions()
         updateCreateButtonState()
-        setupInitialSelection()
-    }
-
-    private func setupInitialSelection() {
-        formView.selectEmoji(formEmoji)
-        formView.selectColor(formColor)
     }
     
     // MARK: - Private Methods
@@ -121,13 +115,16 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
-        guard !formTitle.isEmpty, !formCategory.isEmpty else { return }
+        guard !formTitle.isEmpty,
+              !formCategory.isEmpty,
+              let emoji = formEmoji,
+              let color = formColor else { return }
 
         let tracker = Tracker(
             id: UUID(),
             title: formTitle,
-            color: formColor,
-            emoji: formEmoji,
+            color: color,
+            emoji: emoji,
             schedule: formSchedule
         )
 

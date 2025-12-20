@@ -200,7 +200,7 @@ extension CategoryViewController: UITableViewDelegate {
                 self?.showDeleteConfirmation(at: indexPath.row)
             }
 
-            return UIMenu(title: "", children: [editAction, deleteAction])
+            return UIMenu(title: "", options: .displayInline, children: [editAction, deleteAction])
         }
     }
 

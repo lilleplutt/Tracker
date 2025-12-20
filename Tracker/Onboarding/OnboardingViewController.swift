@@ -68,6 +68,8 @@ final class OnboardingViewController: UIPageViewController {
     
     //MARK: - Actions
     @objc private func didTapOnboardingButton() {
+        UserDefaults.standard.set(true, forKey: "hasCompletedOnboarding")
+
         let tabBar = TabBarController()
         tabBar.modalPresentationStyle = .fullScreen
         tabBar.modalTransitionStyle = .coverVertical
