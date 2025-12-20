@@ -8,12 +8,10 @@ final class CategoryViewController: UIViewController {
 
     // MARK: - UI Elements
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        let tableView = UITableView(frame: .zero, style: .plain)
         tableView.backgroundColor = .ypWhiteIOS
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "CategoryCell")
-        tableView.separatorStyle = .singleLine
-        tableView.separatorColor = .ypGrayIOS
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+        tableView.register(CategoryCell.self, forCellReuseIdentifier: "CategoryCell")
+        tableView.separatorStyle = .none
         tableView.rowHeight = 75
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
@@ -162,19 +160,16 @@ extension CategoryViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        cell.textLabel?.text = viewModel.category(at: indexPath.row)
-        cell.textLabel?.font = .systemFont(ofSize: 17, weight: .regular)
-        cell.textLabel?.textColor = .ypBlackIOS
-        cell.backgroundColor = .ypBackgroundIOS
-        cell.selectionStyle = .none
-
-        if viewModel.isSelected(at: indexPath.row) {
-            cell.accessoryType = .checkmark
-            cell.tintColor = .ypBlueIOS
-        } else {
-            cell.accessoryType = .none
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath) as? CategoryCell else {
+            return UITableViewCell()
         }
+
+        let title = viewModel.category(at: indexPath.row) ?? ""
+        let isSelected = viewModel.isSelected(at: indexPath.row)
+        let isFirst = indexPath.row == 0
+        let isLast = indexPath.row == viewModel.numberOfCategories() - 1
+
+        cell.configure(title: title, isSelected: isSelected, isFirst: isFirst, isLast: isLast)
 
         return cell
     }
