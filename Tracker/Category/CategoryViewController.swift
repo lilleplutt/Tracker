@@ -99,7 +99,6 @@ final class CategoryViewController: UIViewController {
 
             stubImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             stubImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 232),
-            stubImageView.bottomAnchor.constraint(equalTo: addButton.topAnchor, constant: -276),
             stubImageView.widthAnchor.constraint(equalToConstant: 80),
             stubImageView.heightAnchor.constraint(equalToConstant: 80),
 
