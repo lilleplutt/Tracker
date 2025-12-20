@@ -28,11 +28,11 @@ final class CategoryViewController: UIViewController {
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно объединить по смыслу"
+        label.text = "Привычки и события можно\nобъединить по смыслу"
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
         label.textAlignment = .center
-        label.numberOfLines = 0
+        label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -98,7 +98,8 @@ final class CategoryViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: addButton.topAnchor, constant: -16),
 
             stubImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            stubImageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            stubImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 232),
+            stubImageView.bottomAnchor.constraint(equalTo: addButton.topAnchor, constant: -276),
             stubImageView.widthAnchor.constraint(equalToConstant: 80),
             stubImageView.heightAnchor.constraint(equalToConstant: 80),
 
