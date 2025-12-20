@@ -45,7 +45,6 @@ final class PageOneViewController: UIViewController {
             onboardingLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             onboardingLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             onboardingLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 476),
-            ])
+        ])
     }
-    
 }

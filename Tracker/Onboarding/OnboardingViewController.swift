@@ -3,14 +3,14 @@ import UIKit
 final class OnboardingViewController: UIPageViewController {
     
     //MARK: - Properties
-    lazy var pages: [UIViewController] = {
+    private lazy var pages: [UIViewController] = {
         let pageOne = PageOneViewController()
         let pageTwo = PageTwoViewController()
         
         return [pageOne, pageTwo]
     }()
     
-    lazy var pageControl: UIPageControl = {
+   private lazy var pageControl: UIPageControl = {
         let pageControl = UIPageControl()
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
@@ -31,6 +31,8 @@ final class OnboardingViewController: UIPageViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
+        
+        button.addTarget(self, action: #selector(didTapOnboardingButton), for: .touchUpInside)
         return button
     }()
     
@@ -48,6 +50,7 @@ final class OnboardingViewController: UIPageViewController {
         setUpUI()
     }
     
+    //MARK: - Private Methods
     private func setUpUI() {
         view.addSubview(pageControl)
         view.addSubview(onboardingButton)
@@ -61,6 +64,14 @@ final class OnboardingViewController: UIPageViewController {
             onboardingButton.heightAnchor.constraint(equalToConstant: 60),
             onboardingButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 712)
         ])
+    }
+    
+    //MARK: - Actions
+    @objc private func didTapOnboardingButton() {
+        let tabBar = TabBarController()
+        tabBar.modalPresentationStyle = .fullScreen
+        tabBar.modalTransitionStyle = .coverVertical
+        present(tabBar, animated: true)
     }
 }
 
