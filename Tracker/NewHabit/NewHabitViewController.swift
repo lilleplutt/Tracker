@@ -5,21 +5,21 @@ final class NewHabitViewController: UIViewController {
     // MARK: - Private Properties
     private var selectedScheduleDays: [Int] = []
     private var scheduleText: String = ""
-    var onCreateTracker: ((Tracker) -> Void)?
+    var onCreateTracker: ((Tracker, String) -> Void)?
 
     private var formTitle: String = ""
-    private var formCategory: String = "Важное"
+    private var formCategory: String = ""
     private var formSchedule: [Schedule] = []
     
     private let emojis = ["🙂","😻","🌺","🐶","❤️","😱","😇","😡","🥶","🤔","🙌","🍔","🥦","🏓","🥇","🎸","🏝️","😪"]
     private let colorNames = (1...18).map { "Color\($0)" }
     private lazy var colors: [UIColor] = colorNames.compactMap { UIColor(named: $0) }
     
-    private var formEmoji: String = "😭"
-    private var formColor: UIColor = .ypRedIOS
-    
+    private var formEmoji: String?
+    private var formColor: UIColor?
+
     private var isFormReady: Bool {
-        !formTitle.isEmpty && !formSchedule.isEmpty
+        !formTitle.isEmpty && !formSchedule.isEmpty && !formCategory.isEmpty && formEmoji != nil && formColor != nil
     }
     
     private lazy var formView: TrackerFormView = {
@@ -69,12 +69,6 @@ final class NewHabitViewController: UIViewController {
         setupConstraints()
         setupActions()
         updateCreateButtonState()
-        setupInitialSelection()
-    }
-
-    private func setupInitialSelection() {
-        formView.selectEmoji(formEmoji)
-        formView.selectColor(formColor)
     }
     
     // MARK: - Private Methods
@@ -121,17 +115,20 @@ final class NewHabitViewController: UIViewController {
     }
     
     @objc private func didTapCreateButton() {
-        guard !formTitle.isEmpty else { return }
-        
+        guard !formTitle.isEmpty,
+              !formCategory.isEmpty,
+              let emoji = formEmoji,
+              let color = formColor else { return }
+
         let tracker = Tracker(
             id: UUID(),
             title: formTitle,
-            color: formColor,
-            emoji: formEmoji,
+            color: color,
+            emoji: emoji,
             schedule: formSchedule
         )
-        
-        onCreateTracker?(tracker)
+
+        onCreateTracker?(tracker, formCategory)
         dismiss(animated: true)
     }
     
@@ -149,7 +146,17 @@ extension NewHabitViewController: TrackerFormViewDelegate {
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectCategory optionView: TrackerOptionView) {
-        print("Категория tapped")
+        let viewModel = CategoryViewModel(selectedCategory: formCategory)
+        let categoryVC = CategoryViewController(viewModel: viewModel)
+
+        categoryVC.onCategorySelected = { [weak self] selectedCategory in
+            guard let self = self else { return }
+            self.formCategory = selectedCategory
+            self.formView.updateCategory(selectedCategory)
+            self.updateCreateButtonState()
+        }
+
+        navigationController?.pushViewController(categoryVC, animated: true)
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectSchedule optionView: TrackerOptionView) {
@@ -171,9 +178,11 @@ extension NewHabitViewController: TrackerFormViewDelegate {
 
     func trackerFormView(_ view: TrackerFormView, didSelectEmoji emoji: String) {
         formEmoji = emoji
+        updateCreateButtonState()
     }
 
     func trackerFormView(_ view: TrackerFormView, didSelectColor color: UIColor) {
         formColor = color
+        updateCreateButtonState()
     }
 }

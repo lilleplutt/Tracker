@@ -122,6 +122,11 @@ final class TrackerFormView: UIView {
         updateDisplayedData()
     }
 
+    func updateCategory(_ category: String) {
+        formCategory = category
+        updateDisplayedData()
+    }
+
     func selectEmoji(_ emoji: String) {
         if let index = emojis.firstIndex(of: emoji) {
             let indexPath = IndexPath(item: index, section: 0)

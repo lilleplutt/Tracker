@@ -207,8 +207,8 @@ final class TrackersViewController: UIViewController {
     @objc private func plusButtonTapped() {
         let newHabitVC = NewHabitViewController()
         let navController = UINavigationController(rootViewController: newHabitVC)
-        newHabitVC.onCreateTracker = { [weak self] tracker in
-            self?.addNewTracker(tracker)
+        newHabitVC.onCreateTracker = { [weak self] tracker, categoryTitle in
+            self?.addNewTracker(tracker, categoryTitle: categoryTitle)
         }
         present(navController, animated: true)
     }
@@ -235,11 +235,11 @@ final class TrackersViewController: UIViewController {
         collectionView.reloadData()
     }
 
-    private func addNewTracker(_ tracker: Tracker) {
+    private func addNewTracker(_ tracker: Tracker, categoryTitle: String) {
         do {
-            var category = categoryStore.fetchCategory(by: "Важное")
+            var category = categoryStore.fetchCategory(by: categoryTitle)
             if category == nil {
-                category = try categoryStore.addCategory(title: "Важное")
+                category = try categoryStore.addCategory(title: categoryTitle)
             }
 
             guard let category = category,
