@@ -18,7 +18,7 @@ final class CategoryViewController: UIViewController {
     }()
 
     private lazy var stubImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "stub_image"))
+        let imageView = UIImageView(image: UIImage(resource: .stub))
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
