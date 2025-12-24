@@ -1,0 +1,55 @@
+//Category
+"category.stub_message" = "Привычки и события можно\nобъединить по смыслу";
+"category.add_button" = "Добавить категорию";
+"category.title" = "Категория";
+"category.context_edit" = "Редактировать";
+"category.context_delete" = "Удалить";
+"category.alert_message" = "Это категория точно не нужна?";
+"category.alert_delete" = "Удалить";
+"category.alert_cancel" = "Отменить";
+
+//New Category
+"newCategory.text_field" = "Введите название категории";
+"newCategory.done_button" = "Готово";
+"newCategory.title" = "Новая категория";
+
+//Tracker Form View
+"tracker_form_view.emoji_label" = "Emoji";
+"tracker_form_view.color_label" = "Цвет";
+"tracker_form_view.category" = "Категория";
+"tracker_form_view.schedule" = "Расписание";
+"tracker_form_view.placeholder" = "Введите название трекера";
+"tracker_form_view.error_message" = "Ограничение 38 символов";
+
+//New Habit
+"new_habit.title" = "Новая привычка";
+"new_habit.create_button" = "Создать";
+"new_habit.cancel_button" = "Отменить";
+
+//Onboarding
+"onboarding.page_one_text" = "Отслеживайте только то, что хотите";
+"onboarding.page_two_text" = "Даже если это\nне литры воды и йога";
+"onboarding.button" = "Вот это технологии!";
+
+//Schedule
+"schedule.every_day_case" = "Каждый день";
+"schedule.button" = "Готово";
+"schedule.title" = "Расписание";
+//TODO: добавить дни недели
+
+//Statistics
+
+//Tab Bar
+"tab_bar.trackers" = "Трекеры";
+"tab_bar.statistics" = "Статистика";
+
+//Trackers List
+"trackers_list.title" = "Трекеры";
+"trackers_list.stub_message" = "Что будем отслеживать?";
+"trackers_list.search_bar" = "Поиск";
+
+
+
+
+
+
