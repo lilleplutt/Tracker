@@ -278,26 +278,6 @@ final class TrackersViewController: UIViewController {
         stubTitleLabel.isHidden = hasTrackers
     }
     
-    private func getDayString(_ value: Int) -> String {
-        let mod10 = value % 10
-        let mod100 = value % 100
-        
-        let word: String = {
-            switch (mod100, mod10) {
-            case (11...14, _):
-                return "дней"
-            case (_, 1):
-                return "день"
-            case (_, 2...4):
-                return "дня"
-            default:
-                return "дней"
-            }
-        }()
-        
-        return "\(value) \(word)"
-    }
-    
     private func isCompleted(id: UUID, date: Date) -> Bool {
         let calendar = Calendar.current
         let normalizedDate = calendar.startOfDay(for: date)
@@ -306,7 +286,7 @@ final class TrackersViewController: UIViewController {
         }
     }
     
-    private func getCurrentQuanity(id: UUID) -> Int {
+    private func getCurrentQuantity(id: UUID) -> Int {
         return completedTrackers.filter { $0.trackerId == id }.count
     }
     
@@ -353,9 +333,9 @@ extension TrackersViewController: UICollectionViewDataSource {
         let filteredCategories = getFilteredTrackers()
         let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
         let isCompleted = isCompleted(id: tracker.id, date: currentDate)
-        let quanity = getCurrentQuanity(id: tracker.id)
+        let quantity = getCurrentQuantity(id: tracker.id)
         
-        cell.configure(with: tracker, isCompleted: isCompleted, quanity: quanity)
+        cell.configure(with: tracker, isCompleted: isCompleted, quantity: quantity)
         cell.delegate = self
         
         return cell
