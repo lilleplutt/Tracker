@@ -12,6 +12,7 @@
 "category.error_add" = "Ошибка при добавлении категории";
 "category.error_update" = "Ошибка при обновлении категории";
 "category.error_delete" = "Ошибка при удалении категории";
+"category.ok_button" = "ОК";
 
 //New Category
 "newCategory.text_field" = "Введите название категории";

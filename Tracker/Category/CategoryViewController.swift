@@ -144,7 +144,7 @@ final class CategoryViewController: UIViewController {
             message: message,
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: NSLocalizedString("newCategory.done_button", comment: "OK/Done button"), style: .default))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("category.ok_button", comment: "OK/Done button"), style: .default))
         present(alert, animated: true)
     }
 
