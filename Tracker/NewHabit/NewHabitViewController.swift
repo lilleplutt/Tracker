@@ -37,7 +37,7 @@ final class NewHabitViewController: UIViewController {
     
     private lazy var cancelButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Отменить", for: .normal)
+        button.setTitle(NSLocalizedString("new_habit.cancel_button", comment: "Cancel button title"), for: .normal)
         button.setTitleColor(.ypRedIOS, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .clear
@@ -52,9 +52,9 @@ final class NewHabitViewController: UIViewController {
     private lazy var createButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = .ypGrayIOS
-        button.setTitle("Создать", for: .normal)
+        button.setTitle(NSLocalizedString("new_habit.create_button", comment: "Create button title"), for: .normal)
         button.setTitleColor(.ypWhiteIOS, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ final class NewHabitViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         view.backgroundColor = .ypWhiteIOS
-        navigationItem.title = "Новая привычка"
+        navigationItem.title = NSLocalizedString("new_habit.title", comment: "New habit title")
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)

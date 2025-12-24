@@ -39,7 +39,7 @@ final class TrackersViewController: UIViewController {
     
     private let stubTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Что будем отслеживать?"
+        label.text = NSLocalizedString("trackers_list.stub_message", comment: "Trackers list stub message")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.textColor = UIColor(resource: .ypBlackIOS)
@@ -49,7 +49,7 @@ final class TrackersViewController: UIViewController {
     
     private var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
-        searchController.searchBar.placeholder = "Поиск"
+        searchController.searchBar.placeholder = NSLocalizedString("trackers_list.search_bar", comment: "Search bar placeholder")
         return searchController
     }()
     
@@ -146,11 +146,11 @@ final class TrackersViewController: UIViewController {
             .font: UIFont.systemFont(ofSize: 34, weight: .bold)
         ]
         
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString("trackers_list.title", comment: "Trackers screen title")
         navigationItem.largeTitleDisplayMode = .always
         
         if #available(iOS 26.0, *) {
-            navigationItem.largeTitle = "Трекеры"
+            navigationItem.largeTitle = NSLocalizedString("trackers_list.title", comment: "Trackers screen large title")
         }
         
         navigationItem.searchController = searchController
@@ -268,7 +268,7 @@ final class TrackersViewController: UIViewController {
         super.viewWillAppear(animated)
         datePicker.date = currentDate
         dateLabel.text = dateFormatter.string(from: currentDate)
-        navigationItem.title = "Трекеры"
+        navigationItem.title = NSLocalizedString("trackers_list.title", comment: "Trackers screen title")
     }
     
     private func updateStubVisibility() {
@@ -466,4 +466,3 @@ extension TrackersViewController: TrackerRecordStoreDelegate {
         loadDataFromCoreData()
     }
 }
-
