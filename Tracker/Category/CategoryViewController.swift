@@ -26,7 +26,7 @@ final class CategoryViewController: UIViewController {
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        label.text = NSLocalizedString("category.stub_message", comment: "Stub message on category screen")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
         label.textAlignment = .center

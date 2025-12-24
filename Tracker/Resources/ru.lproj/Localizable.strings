@@ -4,9 +4,14 @@
 "category.title" = "Категория";
 "category.context_edit" = "Редактировать";
 "category.context_delete" = "Удалить";
+"category.alert_title" = "Ошибка";
 "category.alert_message" = "Это категория точно не нужна?";
 "category.alert_delete" = "Удалить";
 "category.alert_cancel" = "Отменить";
+"category.error_empty_name" = "Название категории не может быть пустым";
+"category.error_add" = "Ошибка при добавлении категории";
+"category.error_update" = "Ошибка при обновлении категории";
+"category.error_delete" = "Ошибка при удалении категории";
 
 //New Category
 "newCategory.text_field" = "Введите название категории";
@@ -35,7 +40,22 @@
 "schedule.every_day_case" = "Каждый день";
 "schedule.button" = "Готово";
 "schedule.title" = "Расписание";
-//TODO: добавить дни недели
+
+"schedule.monday" = "Понедельник";
+"schedule.tuesday" = "Вторник";
+"schedule.wednesday" = "Среда";
+"schedule.thursday" = "Четверг";
+"schedule.friday" = "Пятница";
+"schedule.saturday" = "Суббота";
+"schedule.sunday" = "Воскресенье";
+
+"schedule.monday_short" = "Пн";
+"schedule.tuesday_short" = "Вт";
+"schedule.wednesday_short" = "Ср";
+"schedule.thursday_short" = "Чт";
+"schedule.friday_short" = "Пт";
+"schedule.saturday_short" = "Сб";
+"schedule.sunday_short" = "Вс";
 
 //Statistics
 
