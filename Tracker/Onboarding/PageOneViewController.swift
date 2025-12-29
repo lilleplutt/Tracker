@@ -15,7 +15,7 @@ final class PageOneViewController: UIViewController {
         label.text = "Отслеживайте только то, что хотите"
         label.numberOfLines = 2
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = UIColor(resource: .ypBlackIOS)
+        label.textColor = UIColor(resource: .ypUniversalBlackIOS)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

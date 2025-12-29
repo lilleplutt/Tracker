@@ -74,7 +74,7 @@ final class TrackersViewController: UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.numberOfLines = 1
         label.textAlignment = .center
-        label.textColor = UIColor(resource: .ypBlackIOS)
+        label.textColor = UIColor(resource: .ypUniversalBlackIOS)
         label.backgroundColor = UIColor(resource: .ypDateIOS)
         label.layer.masksToBounds = true
         label.layer.cornerRadius = 8

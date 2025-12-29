@@ -32,7 +32,8 @@ final class NewCategoryViewController: UIViewController {
     private lazy var doneButton: UIButton = {
         let button = UIButton()
         button.setTitle(NSLocalizedString("newCategory.done_button", comment: "Done button title"), for: .normal)
-        button.setTitleColor(.ypWhiteIOS, for: .normal)
+        button.setTitleColor(.ypUniversalBlackIOS, for: .normal)
+        button.setTitleColor(.ypUniversalWhiteIOS, for: .disabled)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypGrayIOS
         button.layer.masksToBounds = true
