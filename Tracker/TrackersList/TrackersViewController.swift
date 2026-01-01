@@ -70,6 +70,8 @@ final class TrackersViewController: UIViewController {
     private var searchController: UISearchController = {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.searchBar.placeholder = NSLocalizedString("trackers_list.search_bar", comment: "Search bar placeholder")
+        searchController.obscuresBackgroundDuringPresentation = false
+        searchController.hidesNavigationBarDuringPresentation = false
         return searchController
     }()
     
