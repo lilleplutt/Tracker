@@ -6,6 +6,7 @@ final class TrackersViewController: UIViewController {
     private let trackerStore: TrackerStore
     private let categoryStore: TrackerCategoryStore
     private let recordStore: TrackerRecordStore
+    private var searchText: String = ""
 
     // MARK: - Initializers
     init() {
@@ -44,6 +45,25 @@ final class TrackersViewController: UIViewController {
         label.textAlignment = .center
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private let searchStubImage: UIImageView = {
+        let imageView = UIImageView(image: UIImage(resource: .searchStub))
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.isHidden = true
+        return imageView
+    }()
+
+    private let searchStubLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Ничего не найдено"
+        label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+        label.textAlignment = .center
+        label.textColor = UIColor(resource: .ypBlackIOS)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
         return label
     }()
     
@@ -102,9 +122,11 @@ final class TrackersViewController: UIViewController {
     
     // MARK: - Properties
     private var categories: [TrackerCategory] = []
+    private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
     var currentDate: Date = Date() {
         didSet {
+            updateVisibleCategories()
             collectionView.reloadData()
         }
     }
@@ -123,13 +145,16 @@ final class TrackersViewController: UIViewController {
     // MARK: - Private Methods
     private func setupUI() {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
-        
+
         view.addSubview(collectionView)
         view.addSubview(stubImage)
         view.addSubview(stubTitleLabel)
-        
+        view.addSubview(searchStubImage)
+        view.addSubview(searchStubLabel)
+
         setupNavigationBar()
         setupCollectionView()
+        searchController.searchResultsUpdater = self
     }
     
     private func setupNavigationBar() {
@@ -192,15 +217,24 @@ final class TrackersViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            
+
             stubImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
             stubImage.widthAnchor.constraint(equalToConstant: 80),
             stubImage.heightAnchor.constraint(equalToConstant: 80),
-            
+
             stubTitleLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
             stubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            stubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+
+            searchStubImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            searchStubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
+            searchStubImage.widthAnchor.constraint(equalToConstant: 80),
+            searchStubImage.heightAnchor.constraint(equalToConstant: 80),
+
+            searchStubLabel.topAnchor.constraint(equalTo: searchStubImage.bottomAnchor, constant: 8),
+            searchStubLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            searchStubLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
     }
     
@@ -232,6 +266,7 @@ final class TrackersViewController: UIViewController {
         let coreDataRecords = recordStore.records
         completedTrackers = Set(coreDataRecords.compactMap { $0.toTrackerRecord() })
 
+        updateVisibleCategories()
         collectionView.reloadData()
     }
 
@@ -272,10 +307,14 @@ final class TrackersViewController: UIViewController {
     }
     
     private func updateStubVisibility() {
-        let filteredCategories = getFilteredTrackers()
-        let hasTrackers = !filteredCategories.isEmpty && !filteredCategories.allSatisfy { $0.trackers.isEmpty }
-        stubImage.isHidden = hasTrackers
-        stubTitleLabel.isHidden = hasTrackers
+        let hasTrackers = !visibleCategories.isEmpty && !visibleCategories.allSatisfy { $0.trackers.isEmpty }
+        let isSearching = !searchText.isEmpty
+        let hasNoResults = isSearching && !hasTrackers
+
+        stubImage.isHidden = hasTrackers || isSearching
+        stubTitleLabel.isHidden = hasTrackers || isSearching
+        searchStubImage.isHidden = !hasNoResults
+        searchStubLabel.isHidden = !hasNoResults
     }
     
     private func isCompleted(id: UUID, date: Date) -> Bool {
@@ -302,11 +341,26 @@ final class TrackersViewController: UIViewController {
         return tracker.schedule.contains { $0.weekday == weekday }
     }
     
-    private func getFilteredTrackers() -> [TrackerCategory] {
-        return categories.map { category in
+    private func updateVisibleCategories() {
+        var filteredByDate = categories.map { category in
             let filteredTrackers = category.trackers.filter { trackerMatchesDate($0, date: currentDate) }
             return TrackerCategory(title: category.title, trackers: filteredTrackers)
         }.filter { !$0.trackers.isEmpty }
+
+        if !searchText.isEmpty {
+            filteredByDate = filteredByDate.map { category in
+                let filteredTrackers = category.trackers.filter { tracker in
+                    tracker.title.lowercased().contains(searchText.lowercased())
+                }
+                return TrackerCategory(title: category.title, trackers: filteredTrackers)
+            }.filter { !$0.trackers.isEmpty }
+        }
+
+        visibleCategories = filteredByDate
+    }
+
+    private func getFilteredTrackers() -> [TrackerCategory] {
+        return visibleCategories
     }
 }
 
@@ -442,6 +496,9 @@ extension TrackersViewController: TrackersCollectionViewCellDelegate {
 // MARK: - UISearchResultsUpdating
 extension TrackersViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
+        searchText = searchController.searchBar.text ?? ""
+        updateVisibleCategories()
+        updateStubVisibility()
         collectionView.reloadData()
     }
 }
