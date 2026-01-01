@@ -53,7 +53,7 @@ final class NewHabitViewController: UIViewController {
         let button = UIButton()
         button.backgroundColor = .ypGrayIOS
         button.setTitle(NSLocalizedString("new_habit.create_button", comment: "Create button title"), for: .normal)
-        button.setTitleColor(.ypUniversalBlackIOS, for: .normal)
+        button.setTitleColor(.ypWhiteIOS, for: .normal)
         button.setTitleColor(.ypUniversalWhiteIOS, for: .disabled)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.layer.masksToBounds = true
