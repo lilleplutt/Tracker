@@ -557,44 +557,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
         let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
 
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
-            let previewVC = UIViewController()
-            previewVC.view.backgroundColor = tracker.color
-            previewVC.view.layer.cornerRadius = 16
-            previewVC.preferredContentSize = CGSize(width: (collectionView.frame.width - 32 - 9) / 2, height: 90)
-
-            let emojiLabel = UILabel()
-            emojiLabel.text = tracker.emoji
-            emojiLabel.font = .systemFont(ofSize: 14, weight: .medium)
-            emojiLabel.textAlignment = .center
-            emojiLabel.backgroundColor = .emojiBackground
-            emojiLabel.layer.masksToBounds = true
-            emojiLabel.layer.cornerRadius = 12
-            emojiLabel.translatesAutoresizingMaskIntoConstraints = false
-            previewVC.view.addSubview(emojiLabel)
-
-            let titleLabel = UILabel()
-            titleLabel.text = tracker.title
-            titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
-            titleLabel.textColor = .ypUniversalWhiteIOS
-            titleLabel.textAlignment = .left
-            titleLabel.numberOfLines = 2
-            titleLabel.translatesAutoresizingMaskIntoConstraints = false
-            previewVC.view.addSubview(titleLabel)
-
-            NSLayoutConstraint.activate([
-                emojiLabel.topAnchor.constraint(equalTo: previewVC.view.topAnchor, constant: 12),
-                emojiLabel.leadingAnchor.constraint(equalTo: previewVC.view.leadingAnchor, constant: 12),
-                emojiLabel.widthAnchor.constraint(equalToConstant: 24),
-                emojiLabel.heightAnchor.constraint(equalToConstant: 24),
-
-                titleLabel.leadingAnchor.constraint(equalTo: previewVC.view.leadingAnchor, constant: 12),
-                titleLabel.trailingAnchor.constraint(equalTo: previewVC.view.trailingAnchor, constant: -12),
-                titleLabel.bottomAnchor.constraint(equalTo: previewVC.view.bottomAnchor, constant: -12)
-            ])
-
-            return previewVC
-        }, actionProvider: { _ in
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil, actionProvider: { _ in
             let editAction = UIAction(
                 title: NSLocalizedString("context_menu.edit", comment: "Edit")
             ) { [weak self] _ in
@@ -610,6 +573,24 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
 
             return UIMenu(children: [editAction, deleteAction])
         })
+    }
+
+    func collectionView(_ collectionView: UICollectionView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else {
+            return nil
+        }
+
+        return UITargetedPreview(view: cell.getColorView())
+    }
+
+    func collectionView(_ collectionView: UICollectionView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        guard let indexPath = configuration.identifier as? IndexPath,
+              let cell = collectionView.cellForItem(at: indexPath) as? TrackersCollectionViewCell else {
+            return nil
+        }
+
+        return UITargetedPreview(view: cell.getColorView())
     }
 }
 

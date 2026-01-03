@@ -122,7 +122,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
 
         let plusImage = UIImage(resource: .addHabitButton).withRenderingMode(.alwaysTemplate)
         let doneImage = UIImage(resource: .completeHabitButton).withRenderingMode(.alwaysTemplate)
-        
+
         if isCompleted {
             plusButton.setImage(doneImage, for: .normal)
             plusButton.backgroundColor = .ypWhiteIOS
@@ -133,5 +133,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             plusButton.tintColor = tracker.color
         }
     }
-    
+
+    func getColorView() -> UIView {
+        return colorView
+    }
+
 }
