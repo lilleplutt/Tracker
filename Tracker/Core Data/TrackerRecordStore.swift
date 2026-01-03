@@ -103,6 +103,17 @@ final class TrackerRecordStore: NSObject {
     func isTrackerCompleted(trackerId: UUID, date: Date) -> Bool {
         return fetchRecord(trackerId: trackerId, date: date) != nil
     }
+
+    func getFinishedTrackersCount() -> Int {
+        let fetchRequest = TrackerRecordCoreData.fetchRequest()
+
+        guard let records = try? context.fetch(fetchRequest) else {
+            return 0
+        }
+
+        let uniqueTrackerIds = Set(records.compactMap { $0.trackerId })
+        return uniqueTrackerIds.count
+    }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
