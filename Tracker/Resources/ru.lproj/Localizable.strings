@@ -59,6 +59,8 @@
 "schedule.sunday_short" = "Вс";
 
 //Statistics
+"statistics.title" = "Статистика";
+"statistics.stub_message" = "Анализировать пока нечего";
 
 //Tab Bar
 "tab_bar.trackers" = "Трекеры";
@@ -68,6 +70,7 @@
 "trackers_list.title" = "Трекеры";
 "trackers_list.stub_message" = "Что будем отслеживать?";
 "trackers_list.search_bar" = "Поиск";
+"trackers_list.search_stub_message" = "Ничего не найдено";
 
 
 

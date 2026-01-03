@@ -58,7 +58,7 @@ final class TrackersViewController: UIViewController {
 
     private let searchStubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Ничего не найдено"
+        label.text = NSLocalizedString("trackers_list.search_stub_message", comment: "Search stub message")
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .center
         label.textColor = UIColor(resource: .ypBlackIOS)

@@ -59,6 +59,8 @@
 "schedule.sunday_short" = "Sun";
 
 //Statistics
+"statistics.title" = "Statistics";
+"statistics.stub_message" = "Nothing to analyze";
 
 //Tab Bar
 "tab_bar.trackers" = "Trackers";
@@ -68,3 +70,4 @@
 "trackers_list.title" = "Trackers";
 "trackers_list.stub_message" = "What shall we track?";
 "trackers_list.search_bar" = "Search";
+"trackers_list.search_stub_message" = "Nothing found";
