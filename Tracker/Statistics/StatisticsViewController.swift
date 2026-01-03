@@ -134,7 +134,7 @@ final class StatisticsViewController: UIViewController {
             statisticsStubTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             statisticsStubTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
-            cardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 206),
+            cardView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 77),
             cardView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             cardView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             cardView.heightAnchor.constraint(equalToConstant: 90),
