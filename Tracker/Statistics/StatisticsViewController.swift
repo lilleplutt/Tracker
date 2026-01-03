@@ -1,7 +1,14 @@
 import UIKit
 
 final class StatisticsViewController: UIViewController {
-    
+
+    //MARK: - Properties
+    private var finishedTrackersCount: Int = 0 {
+        didSet {
+            updateUI()
+        }
+    }
+
     //MARK: - UI Elements
     private lazy var cardView: UIView = {
         let view = UIView()
@@ -16,16 +23,18 @@ final class StatisticsViewController: UIViewController {
         label.text = "0"
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.font = UIFont.systemFont(ofSize: 34, weight: .bold)
-        label.textAlignment = .right
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let finishedTrackersCommentLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("statistics.finished_trackers_label", comment: "Finished trackers message")
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-        label.textAlignment = .right
+        label.textAlignment = .left
+        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -49,10 +58,11 @@ final class StatisticsViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         setupNavigationBar()
         setupUI()
         setupConstraints()
+        updateUI()
     }
     
     //MARK: - Private methods
@@ -75,9 +85,34 @@ final class StatisticsViewController: UIViewController {
         view.backgroundColor = UIColor(resource: .ypWhiteIOS)
         view.addSubview(statisticsStubImage)
         view.addSubview(statisticsStubTitleLabel)
-        
+        view.addSubview(cardView)
+
         cardView.addSubview(finishedTrackersCountLabel)
         cardView.addSubview(finishedTrackersCommentLabel)
+
+        setupGradientBorder()
+    }
+
+    private func setupGradientBorder() {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width - 32, height: 90)
+        gradientLayer.colors = [
+            UIColor(red: 0, green: 123/255, blue: 250/255, alpha: 1).cgColor,
+            UIColor(red: 70/255, green: 230/255, blue: 157/255, alpha: 1).cgColor,
+            UIColor(red: 253/255, green: 76/255, blue: 73/255, alpha: 1).cgColor   
+        ]
+        gradientLayer.startPoint = CGPoint(x: 1, y: 0.5)
+        gradientLayer.endPoint = CGPoint(x: 0, y: 0.5)
+        gradientLayer.cornerRadius = 16
+
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.lineWidth = 1
+        shapeLayer.path = UIBezierPath(roundedRect: gradientLayer.bounds, cornerRadius: 16).cgPath
+        shapeLayer.fillColor = nil
+        shapeLayer.strokeColor = UIColor.black.cgColor
+        gradientLayer.mask = shapeLayer
+
+        cardView.layer.addSublayer(gradientLayer)
     }
     
     private func setupConstraints() {
@@ -103,5 +138,15 @@ final class StatisticsViewController: UIViewController {
             finishedTrackersCommentLabel.leadingAnchor.constraint(equalTo: cardView.leadingAnchor, constant: 12)
         ])
     }
-    
+
+    private func updateUI() {
+        finishedTrackersCountLabel.text = "\(finishedTrackersCount)"
+
+        let hasFinishedTrackers = finishedTrackersCount > 0
+
+        cardView.isHidden = !hasFinishedTrackers
+        statisticsStubImage.isHidden = hasFinishedTrackers
+        statisticsStubTitleLabel.isHidden = hasFinishedTrackers
+    }
+
 }
