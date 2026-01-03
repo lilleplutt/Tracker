@@ -50,17 +50,20 @@ final class TrackerRecordStore: NSObject {
         record.date = date
 
         try context.save()
+        StatisticsService.shared.notifyUpdate()
     }
 
     func deleteRecord(_ record: TrackerRecordCoreData) throws {
         context.delete(record)
         try context.save()
+        StatisticsService.shared.notifyUpdate()
     }
 
     func deleteRecord(trackerId: UUID, date: Date) throws {
         if let record = fetchRecord(trackerId: trackerId, date: date) {
             context.delete(record)
             try context.save()
+            StatisticsService.shared.notifyUpdate()
         }
     }
 

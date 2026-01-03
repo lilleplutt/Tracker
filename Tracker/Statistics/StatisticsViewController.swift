@@ -3,6 +3,8 @@ import UIKit
 final class StatisticsViewController: UIViewController {
 
     //MARK: - Properties
+    private let statisticsService = StatisticsService.shared
+
     private var finishedTrackersCount: Int = 0 {
         didSet {
             updateUI()
@@ -62,7 +64,13 @@ final class StatisticsViewController: UIViewController {
         setupNavigationBar()
         setupUI()
         setupConstraints()
-        updateUI()
+        statisticsService.delegate = self
+        loadStatistics()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        loadStatistics()
     }
     
     //MARK: - Private methods
@@ -149,4 +157,16 @@ final class StatisticsViewController: UIViewController {
         statisticsStubTitleLabel.isHidden = hasFinishedTrackers
     }
 
+    private func loadStatistics() {
+        finishedTrackersCount = statisticsService.getFinishedTrackersCount()
+    }
+
 }
+
+// MARK: - StatisticsServiceDelegate
+extension StatisticsViewController: StatisticsServiceDelegate {
+    func statisticsDidUpdate() {
+        loadStatistics()
+    }
+}
+
