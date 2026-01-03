@@ -61,7 +61,7 @@
 //Statistics
 "statistics.title" = "Статистика";
 "statistics.stub_message" = "Анализировать пока нечего";
-"statistics.finished_trackers_count_label" = "Лучший период";
+"statistics.finished_trackers_label" = "Трекеров завершено";
 
 //Tab Bar
 "tab_bar.trackers" = "Трекеры";

@@ -22,7 +22,7 @@ final class StatisticsViewController: UIViewController {
     
     private let finishedTrackersCommentLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("statistics.finished_trackers_count_label", comment: "Finished trackers message")
+        label.text = NSLocalizedString("statistics.finished_trackers_label", comment: "Finished trackers message")
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textAlignment = .right
