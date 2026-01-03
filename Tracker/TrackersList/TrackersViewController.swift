@@ -300,6 +300,101 @@ final class TrackersViewController: UIViewController {
             print("Error saving tracker: \(error)")
         }
     }
+
+    private func editTracker(_ tracker: Tracker) {
+        let completedDaysCount = getCurrentQuantity(id: tracker.id)
+
+        // Найти категорию трекера
+        var categoryTitle = ""
+        for category in categories {
+            if category.trackers.contains(where: { $0.id == tracker.id }) {
+                categoryTitle = category.title
+                break
+            }
+        }
+
+        let newHabitVC = NewHabitViewController()
+        newHabitVC.configureForEditing(tracker: tracker, categoryTitle: categoryTitle, completedDaysCount: completedDaysCount)
+
+        newHabitVC.onCreateTracker = { [weak self] updatedTracker, categoryTitle in
+            self?.updateTracker(updatedTracker, categoryTitle: categoryTitle)
+        }
+
+        let navController = UINavigationController(rootViewController: newHabitVC)
+        present(navController, animated: true)
+    }
+
+    private func updateTracker(_ tracker: Tracker, categoryTitle: String) {
+        do {
+            guard let trackerCoreData = trackerStore.fetchTracker(by: tracker.id),
+                  let colorHex = tracker.color.toHex() else {
+                return
+            }
+
+            var category = categoryStore.fetchCategory(by: categoryTitle)
+            if category == nil {
+                category = try categoryStore.addCategory(title: categoryTitle)
+            }
+
+            guard let category = category else {
+                return
+            }
+
+            trackerCoreData.title = tracker.title
+            trackerCoreData.emoji = tracker.emoji
+            trackerCoreData.colorHex = colorHex
+            trackerCoreData.scheduleData = tracker.schedule.toString()
+            trackerCoreData.category = category
+
+            try trackerStore.updateTracker(trackerCoreData)
+
+            loadDataFromCoreData()
+        } catch {
+            print("Error updating tracker: \(error)")
+        }
+    }
+
+    private func confirmDeleteTracker(_ tracker: Tracker) {
+        let alert = UIAlertController(
+            title: nil,
+            message: NSLocalizedString("delete_confirmation.title", comment: "Delete confirmation"),
+            preferredStyle: .actionSheet
+        )
+
+        let deleteAction = UIAlertAction(
+            title: NSLocalizedString("delete_confirmation.delete", comment: "Delete"),
+            style: .destructive
+        ) { [weak self] _ in
+            self?.deleteTracker(tracker)
+        }
+
+        let cancelAction = UIAlertAction(
+            title: NSLocalizedString("delete_confirmation.cancel", comment: "Cancel"),
+            style: .cancel
+        )
+
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+
+        present(alert, animated: true)
+    }
+
+    private func deleteTracker(_ tracker: Tracker) {
+        do {
+            guard let trackerCoreData = trackerStore.fetchTracker(by: tracker.id) else {
+                return
+            }
+
+            try trackerStore.deleteTracker(trackerCoreData)
+
+            completedTrackers = completedTrackers.filter { $0.trackerId != tracker.id }
+
+            loadDataFromCoreData()
+            updateStubVisibility()
+        } catch {
+            print("Error deleting tracker: \(error)")
+        }
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -428,29 +523,93 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             withReuseIdentifier: "header",
             for: indexPath
         )
-        
+
         headerView.subviews.forEach { $0.removeFromSuperview() }
-        
+
         let filteredCategories = getFilteredTrackers()
         guard indexPath.section < filteredCategories.count else {
             return headerView
         }
-        
+
         let category = filteredCategories[indexPath.section]
         let label = UILabel()
         label.text = category.title
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = UIColor(resource: .ypBlackIOS)
         label.translatesAutoresizingMaskIntoConstraints = false
-        
+
         headerView.addSubview(label)
-        
+
         NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 28),
             label.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: -20)
         ])
-        
+
         return headerView
+    }
+
+    func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        let filteredCategories = getFilteredTrackers()
+        guard indexPath.section < filteredCategories.count,
+              indexPath.row < filteredCategories[indexPath.section].trackers.count else {
+            return nil
+        }
+
+        let tracker = filteredCategories[indexPath.section].trackers[indexPath.row]
+
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: {
+            let previewVC = UIViewController()
+            previewVC.view.backgroundColor = tracker.color
+            previewVC.view.layer.cornerRadius = 16
+            previewVC.preferredContentSize = CGSize(width: (collectionView.frame.width - 32 - 9) / 2, height: 90)
+
+            let emojiLabel = UILabel()
+            emojiLabel.text = tracker.emoji
+            emojiLabel.font = .systemFont(ofSize: 14, weight: .medium)
+            emojiLabel.textAlignment = .center
+            emojiLabel.backgroundColor = .emojiBackground
+            emojiLabel.layer.masksToBounds = true
+            emojiLabel.layer.cornerRadius = 12
+            emojiLabel.translatesAutoresizingMaskIntoConstraints = false
+            previewVC.view.addSubview(emojiLabel)
+
+            let titleLabel = UILabel()
+            titleLabel.text = tracker.title
+            titleLabel.font = .systemFont(ofSize: 12, weight: .medium)
+            titleLabel.textColor = .ypUniversalWhiteIOS
+            titleLabel.textAlignment = .left
+            titleLabel.numberOfLines = 2
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            previewVC.view.addSubview(titleLabel)
+
+            NSLayoutConstraint.activate([
+                emojiLabel.topAnchor.constraint(equalTo: previewVC.view.topAnchor, constant: 12),
+                emojiLabel.leadingAnchor.constraint(equalTo: previewVC.view.leadingAnchor, constant: 12),
+                emojiLabel.widthAnchor.constraint(equalToConstant: 24),
+                emojiLabel.heightAnchor.constraint(equalToConstant: 24),
+
+                titleLabel.leadingAnchor.constraint(equalTo: previewVC.view.leadingAnchor, constant: 12),
+                titleLabel.trailingAnchor.constraint(equalTo: previewVC.view.trailingAnchor, constant: -12),
+                titleLabel.bottomAnchor.constraint(equalTo: previewVC.view.bottomAnchor, constant: -12)
+            ])
+
+            return previewVC
+        }, actionProvider: { _ in
+            let editAction = UIAction(
+                title: NSLocalizedString("context_menu.edit", comment: "Edit")
+            ) { [weak self] _ in
+                self?.editTracker(tracker)
+            }
+
+            let deleteAction = UIAction(
+                title: NSLocalizedString("context_menu.delete", comment: "Delete"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.confirmDeleteTracker(tracker)
+            }
+
+            return UIMenu(children: [editAction, deleteAction])
+        })
     }
 }
 

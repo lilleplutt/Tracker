@@ -32,6 +32,19 @@
 "new_habit.create_button" = "Create";
 "new_habit.cancel_button" = "Cancel";
 
+//Edit Habit
+"edit_habit.title" = "Edit Habit";
+"edit_habit.save_button" = "Save";
+
+//Context Menu
+"context_menu.edit" = "Edit";
+"context_menu.delete" = "Delete";
+
+//Delete Confirmation
+"delete_confirmation.title" = "Are you sure you want to delete this tracker?";
+"delete_confirmation.delete" = "Delete";
+"delete_confirmation.cancel" = "Cancel";
+
 //Onboarding
 "onboarding.page_one_text" = "Track only what you want";
 "onboarding.page_two_text" = "Even if it's not liters of water and yoga";

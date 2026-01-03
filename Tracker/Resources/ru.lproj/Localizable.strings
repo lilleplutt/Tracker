@@ -32,6 +32,19 @@
 "new_habit.create_button" = "Создать";
 "new_habit.cancel_button" = "Отменить";
 
+//Edit Habit
+"edit_habit.title" = "Редактирование привычки";
+"edit_habit.save_button" = "Сохранить";
+
+//Context Menu
+"context_menu.edit" = "Редактировать";
+"context_menu.delete" = "Удалить";
+
+//Delete Confirmation
+"delete_confirmation.title" = "Уверены что хотите удалить трекер?";
+"delete_confirmation.delete" = "Удалить";
+"delete_confirmation.cancel" = "Отменить";
+
 //Onboarding
 "onboarding.page_one_text" = "Отслеживайте только то, что хотите";
 "onboarding.page_two_text" = "Даже если это\nне литры воды и йога";
