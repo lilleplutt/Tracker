@@ -14,13 +14,15 @@ final class TabBarController: UITabBarController {
         )
 
         let statisticsViewController = StatisticsViewController()
-        statisticsViewController.tabBarItem = UITabBarItem(
+        let statisticsNavigationController = UINavigationController(rootViewController: statisticsViewController)
+        statisticsNavigationController.tabBarItem = UITabBarItem(
             title: NSLocalizedString("tab_bar.statistics", comment: "Tab title: Statistics"),
             image: UIImage(resource: .tabBarStatistics).withRenderingMode(.alwaysTemplate),
             selectedImage: UIImage(resource: .tabBarStatistics).withRenderingMode(.alwaysTemplate)
         )
 
-        self.viewControllers = [trackerNavigationController, statisticsViewController]
+        self.viewControllers = [trackerNavigationController, statisticsNavigationController]
+
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = .ypWhiteIOS
