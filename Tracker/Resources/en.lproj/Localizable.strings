@@ -61,6 +61,7 @@
 //Statistics
 "statistics.title" = "Statistics";
 "statistics.stub_message" = "Nothing to analyze";
+"statistics.finished_trackers_count_label" = "Best period";
 
 //Tab Bar
 "tab_bar.trackers" = "Trackers";
