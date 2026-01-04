@@ -143,6 +143,16 @@ final class TrackersViewController: UIViewController {
         loadDataFromCoreData()
         updateStubVisibility()
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsService.shared.reportScreenOpen(.main)
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        AnalyticsService.shared.reportScreenClose(.main)
+    }
     
     // MARK: - Private Methods
     private func setupUI() {
@@ -241,6 +251,8 @@ final class TrackersViewController: UIViewController {
     }
     
     @objc private func plusButtonTapped() {
+        AnalyticsService.shared.reportClick(screen: .main, item: .addTrack)
+
         let newHabitVC = NewHabitViewController()
         let navController = UINavigationController(rootViewController: newHabitVC)
         newHabitVC.onCreateTracker = { [weak self] tracker, categoryTitle in
@@ -304,7 +316,6 @@ final class TrackersViewController: UIViewController {
     private func editTracker(_ tracker: Tracker) {
         let completedDaysCount = getCurrentQuantity(id: tracker.id)
 
-        // Найти категорию трекера
         var categoryTitle = ""
         for category in categories {
             if category.trackers.contains(where: { $0.id == tracker.id }) {
@@ -561,6 +572,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
             let editAction = UIAction(
                 title: NSLocalizedString("context_menu.edit", comment: "Edit")
             ) { [weak self] _ in
+                AnalyticsService.shared.reportClick(screen: .main, item: .edit)
                 self?.editTracker(tracker)
             }
 
@@ -568,6 +580,7 @@ extension TrackersViewController: UICollectionViewDelegateFlowLayout {
                 title: NSLocalizedString("context_menu.delete", comment: "Delete"),
                 attributes: .destructive
             ) { [weak self] _ in
+                AnalyticsService.shared.reportClick(screen: .main, item: .delete)
                 self?.confirmDeleteTracker(tracker)
             }
 
@@ -601,6 +614,8 @@ protocol TrackersCollectionViewCellDelegate: AnyObject {
 
 extension TrackersViewController: TrackersCollectionViewCellDelegate {
     func completeButtonDidTap(in cell: TrackersCollectionViewCell) {
+        AnalyticsService.shared.reportClick(screen: .main, item: .track)
+
         let calendar = Calendar.current
         if calendar.compare(currentDate, to: Date(), toGranularity: .day) == .orderedDescending {
             return
