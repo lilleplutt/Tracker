@@ -7,7 +7,10 @@ final class AnalyticsService {
     private init() {}
 
     func activate() {
-        let configuration = AppMetricaConfiguration(apiKey: "775a36da-b7fe-491e-8b2d-fd16221351e9")
+        guard let configuration = AppMetricaConfiguration(apiKey: "775a36da-b7fe-491e-8b2d-fd16221351e9") else {
+            print("ANALYTICS ERROR: Failed to create AppMetrica configuration")
+            return
+        }
         AppMetrica.activate(with: configuration)
     }
 
