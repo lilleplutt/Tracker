@@ -131,6 +131,7 @@ final class TrackersViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(filterButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -277,6 +278,13 @@ final class TrackersViewController: UIViewController {
             self?.addNewTracker(tracker, categoryTitle: categoryTitle)
         }
         present(navController, animated: true)
+    }
+    
+    @objc private func filterButtonTapped() {
+        AnalyticsService.shared.reportClick(screen: .main, item: .filter)
+        
+        let filterVC = FilterViewController()
+        present(filterVC, animated: true)
     }
     
     @objc private func datePickerValueChanged() {
