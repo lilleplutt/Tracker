@@ -85,6 +85,7 @@
 "trackers_list.stub_message" = "Что будем отслеживать?";
 "trackers_list.search_bar" = "Поиск";
 "trackers_list.search_stub_message" = "Ничего не найдено";
+"trackers_list.filter_button" = "Фильтры";
 
 
 

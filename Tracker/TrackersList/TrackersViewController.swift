@@ -122,6 +122,18 @@ final class TrackersViewController: UIViewController {
         return collectionView
     }()
     
+    private lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.setTitle(NSLocalizedString("trackers_list.filter_button", comment: "Filter button title"), for: .normal)
+        button.setTitleColor(.ypUniversalWhiteIOS, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        button.backgroundColor = .ypBlueIOS
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 16
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     // MARK: - Properties
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
@@ -163,6 +175,7 @@ final class TrackersViewController: UIViewController {
         view.addSubview(stubTitleLabel)
         view.addSubview(searchStubImage)
         view.addSubview(searchStubLabel)
+        view.addSubview(filterButton)
 
         setupNavigationBar()
         setupCollectionView()
@@ -246,7 +259,12 @@ final class TrackersViewController: UIViewController {
 
             searchStubLabel.topAnchor.constraint(equalTo: searchStubImage.bottomAnchor, constant: 8),
             searchStubLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            searchStubLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            searchStubLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+            filterButton.widthAnchor.constraint(equalToConstant: 114),
+            filterButton.heightAnchor.constraint(equalToConstant: 50),
+            filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            filterButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 618)
         ])
     }
     
