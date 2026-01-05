@@ -181,10 +181,6 @@ final class TrackersViewController: UIViewController {
         setupNavigationBar()
         setupCollectionView()
         searchController.searchResultsUpdater = self
-
-        if let navigationBar = navigationController?.navigationBar {
-            navigationBar.isTranslucent = true
-        }
     }
     
     private func setupNavigationBar() {
