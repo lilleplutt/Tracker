@@ -181,30 +181,35 @@ final class TrackersViewController: UIViewController {
         setupNavigationBar()
         setupCollectionView()
         searchController.searchResultsUpdater = self
+
+        if let navigationBar = navigationController?.navigationBar {
+            navigationBar.isTranslucent = true
+        }
     }
     
     private func setupNavigationBar() {
         setupDatePickerConstraints()
-        
+
         let dateBarButtonItem = UIBarButtonItem(customView: dateContainerView)
         let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
         navigationItem.leftBarButtonItem = plusBarButtonItem
         navigationItem.rightBarButtonItem = dateBarButtonItem
-        
+
         navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 34, weight: .bold)
         ]
-        
+
         navigationItem.title = NSLocalizedString("trackers_list.title", comment: "Trackers screen title")
         navigationItem.largeTitleDisplayMode = .always
-        
+
         if #available(iOS 26.0, *) {
             navigationItem.largeTitle = NSLocalizedString("trackers_list.title", comment: "Trackers screen large title")
         }
-        
+
         navigationItem.searchController = searchController
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
     
     private func setupDatePickerConstraints() {
@@ -233,7 +238,9 @@ final class TrackersViewController: UIViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "header"
         )
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 82, right: 0)
+        collectionView.scrollIndicatorInsets = UIEdgeInsets(top: 0, left: 0, bottom: 82, right: 0)
     }
     
     private func setupConstraints() {
@@ -242,7 +249,7 @@ final class TrackersViewController: UIViewController {
             collectionView.topAnchor.constraint(equalTo: view.topAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
 
             stubImage.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             stubImage.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
@@ -261,11 +268,11 @@ final class TrackersViewController: UIViewController {
             searchStubLabel.topAnchor.constraint(equalTo: searchStubImage.bottomAnchor, constant: 8),
             searchStubLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchStubLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
+
             filterButton.widthAnchor.constraint(equalToConstant: 114),
             filterButton.heightAnchor.constraint(equalToConstant: 50),
             filterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            filterButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 618)
+            filterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
     }
     
@@ -282,9 +289,10 @@ final class TrackersViewController: UIViewController {
     
     @objc private func filterButtonTapped() {
         AnalyticsService.shared.reportClick(screen: .main, item: .filter)
-        
+
         let filterVC = FilterViewController()
-        present(filterVC, animated: true)
+        let navController = UINavigationController(rootViewController: filterVC)
+        present(navController, animated: true)
     }
     
     @objc private func datePickerValueChanged() {
