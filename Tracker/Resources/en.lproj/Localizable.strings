@@ -85,3 +85,11 @@
 "trackers_list.stub_message" = "What shall we track?";
 "trackers_list.search_bar" = "Search";
 "trackers_list.search_stub_message" = "Nothing found";
+"trackers_list.filter_button" = "Filters";
+
+//Filters
+"filter.title" = "Filters";
+"filter.all_trackers" = "All trackers";
+"filter.today_trackers" = "Trackers for today";
+"filter.completed" = "Completed";
+"filter.not_completed" = "Not completed";

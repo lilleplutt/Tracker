@@ -139,6 +139,7 @@ final class TrackersViewController: UIViewController {
     private var categories: [TrackerCategory] = []
     private var visibleCategories: [TrackerCategory] = []
     private var completedTrackers: Set<TrackerRecord> = []
+    private var currentFilter: TrackerFilter = .allTrackers
     var currentDate: Date = Date() {
         didSet {
             updateVisibleCategories()
@@ -287,6 +288,8 @@ final class TrackersViewController: UIViewController {
         AnalyticsService.shared.reportClick(screen: .main, item: .filter)
 
         let filterVC = FilterViewController()
+        filterVC.selectedFilter = currentFilter
+        filterVC.delegate = self
         let navController = UINavigationController(rootViewController: filterVC)
         present(navController, animated: true)
     }
@@ -489,6 +492,32 @@ final class TrackersViewController: UIViewController {
             filteredByDate = filteredByDate.map { category in
                 let filteredTrackers = category.trackers.filter { tracker in
                     tracker.title.lowercased().contains(searchText.lowercased())
+                }
+                return TrackerCategory(title: category.title, trackers: filteredTrackers)
+            }.filter { !$0.trackers.isEmpty }
+        }
+
+        // Применяем фильтр
+        switch currentFilter {
+        case .allTrackers:
+            // Показываем все трекеры (уже отфильтровано по дате)
+            break
+        case .todayTrackers:
+            // Показываем все трекеры (уже отфильтровано по дате)
+            break
+        case .completed:
+            // Показываем только завершенные трекеры на выбранный день
+            filteredByDate = filteredByDate.map { category in
+                let filteredTrackers = category.trackers.filter { tracker in
+                    isCompleted(id: tracker.id, date: currentDate)
+                }
+                return TrackerCategory(title: category.title, trackers: filteredTrackers)
+            }.filter { !$0.trackers.isEmpty }
+        case .notCompleted:
+            // Показываем только незавершенные трекеры на выбранный день
+            filteredByDate = filteredByDate.map { category in
+                let filteredTrackers = category.trackers.filter { tracker in
+                    !isCompleted(id: tracker.id, date: currentDate)
                 }
                 return TrackerCategory(title: category.title, trackers: filteredTrackers)
             }.filter { !$0.trackers.isEmpty }
@@ -708,5 +737,22 @@ extension TrackersViewController: TrackerCategoryStoreDelegate {
 extension TrackersViewController: TrackerRecordStoreDelegate {
     func trackerRecordStoreDidUpdate() {
         loadDataFromCoreData()
+    }
+}
+
+// MARK: - FilterViewControllerDelegate
+extension TrackersViewController: FilterViewControllerDelegate {
+    func didSelectFilter(_ filter: TrackerFilter) {
+        currentFilter = filter
+
+        if filter == .todayTrackers {
+            currentDate = Date()
+            datePicker.date = Date()
+            dateLabel.text = dateFormatter.string(from: Date())
+        }
+
+        updateVisibleCategories()
+        updateStubVisibility()
+        collectionView.reloadData()
     }
 }

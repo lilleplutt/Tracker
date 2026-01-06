@@ -102,6 +102,5 @@ final class FilterCell: UITableViewCell {
         separatorView.isHidden = isLast
     }
     
-    
 }
 
