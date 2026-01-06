@@ -497,16 +497,12 @@ final class TrackersViewController: UIViewController {
             }.filter { !$0.trackers.isEmpty }
         }
 
-        // Применяем фильтр
         switch currentFilter {
         case .allTrackers:
-            // Показываем все трекеры (уже отфильтровано по дате)
             break
         case .todayTrackers:
-            // Показываем все трекеры (уже отфильтровано по дате)
             break
         case .completed:
-            // Показываем только завершенные трекеры на выбранный день
             filteredByDate = filteredByDate.map { category in
                 let filteredTrackers = category.trackers.filter { tracker in
                     isCompleted(id: tracker.id, date: currentDate)
@@ -514,7 +510,6 @@ final class TrackersViewController: UIViewController {
                 return TrackerCategory(title: category.title, trackers: filteredTrackers)
             }.filter { !$0.trackers.isEmpty }
         case .notCompleted:
-            // Показываем только незавершенные трекеры на выбранный день
             filteredByDate = filteredByDate.map { category in
                 let filteredTrackers = category.trackers.filter { tracker in
                     !isCompleted(id: tracker.id, date: currentDate)
