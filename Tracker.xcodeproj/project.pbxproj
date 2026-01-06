@@ -64,11 +64,6 @@
 			path = TrackerTests;
 			sourceTree = "<group>";
 		};
-		FD9A420B2EC4807C005BB9C0 /* TrackerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TrackerUITests;
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,7 +104,6 @@
 			children = (
 				FD9A41E72EC4807B005BB9C0 /* Tracker */,
 				FD9A42012EC4807C005BB9C0 /* TrackerTests */,
-				FD9A420B2EC4807C005BB9C0 /* TrackerUITests */,
 				FD9A41E62EC4807B005BB9C0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -192,9 +186,6 @@
 			);
 			dependencies = (
 				FD9A420A2EC4807C005BB9C0 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				FD9A420B2EC4807C005BB9C0 /* TrackerUITests */,
 			);
 			name = TrackerUITests;
 			packageProductDependencies = (
