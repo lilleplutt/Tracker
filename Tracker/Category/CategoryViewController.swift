@@ -26,7 +26,7 @@ final class CategoryViewController: UIViewController {
 
     private lazy var stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Привычки и события можно\nобъединить по смыслу"
+        label.text = NSLocalizedString("category.stub_message", comment: "Stub message on category screen")
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
         label.textAlignment = .center
@@ -37,7 +37,7 @@ final class CategoryViewController: UIViewController {
 
     private lazy var addButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Добавить категорию", for: .normal)
+        button.setTitle(NSLocalizedString("category.add_button", comment: "Add category button title"), for: .normal)
         button.setTitleColor(.ypWhiteIOS, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.backgroundColor = .ypBlackIOS
@@ -70,7 +70,7 @@ final class CategoryViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .ypWhiteIOS
 
-        navigationItem.title = "Категория"
+        navigationItem.title = NSLocalizedString("category.title", comment: "Category screen title")
         navigationController?.navigationBar.titleTextAttributes = [
             .foregroundColor: UIColor.ypBlackIOS,
             .font: UIFont.systemFont(ofSize: 16, weight: .medium)
@@ -139,8 +139,12 @@ final class CategoryViewController: UIViewController {
     }
 
     private func showError(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        let alert = UIAlertController(
+            title: NSLocalizedString("category.alert_title", comment: "Error alert title"),
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: NSLocalizedString("category.ok_button", comment: "OK/Done button"), style: .default))
         present(alert, animated: true)
     }
 
@@ -186,11 +190,11 @@ extension CategoryViewController: UITableViewDelegate {
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             guard let self = self else { return nil }
 
-            let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+            let editAction = UIAction(title: NSLocalizedString("category.context_edit", comment: "Edit category")) { [weak self] _ in
                 self?.editCategory(at: indexPath.row)
             }
 
-            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+            let deleteAction = UIAction(title: NSLocalizedString("category.context_delete", comment: "Delete category"), attributes: .destructive) { [weak self] _ in
                 self?.showDeleteConfirmation(at: indexPath.row)
             }
 
@@ -211,15 +215,15 @@ extension CategoryViewController: UITableViewDelegate {
     private func showDeleteConfirmation(at index: Int) {
         let alert = UIAlertController(
             title: nil,
-            message: "Это категория точно не нужна?",
+            message: NSLocalizedString("category.alert_message", comment: "Delete category confirmation"),
             preferredStyle: .actionSheet
         )
 
-        let deleteAction = UIAlertAction(title: "Удалить", style: .destructive) { [weak self] _ in
+        let deleteAction = UIAlertAction(title: NSLocalizedString("category.alert_delete", comment: "Delete action"), style: .destructive) { [weak self] _ in
             self?.viewModel.deleteCategory(at: index)
         }
 
-        let cancelAction = UIAlertAction(title: "Отменить", style: .cancel)
+        let cancelAction = UIAlertAction(title: NSLocalizedString("category.alert_cancel", comment: "Cancel action"), style: .cancel)
 
         alert.addAction(deleteAction)
         alert.addAction(cancelAction)

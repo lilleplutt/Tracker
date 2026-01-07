@@ -2,7 +2,15 @@ import Foundation
 
 enum ScheduleHelper {
     
-    static let daySymbols = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+    static let daySymbols = [
+        NSLocalizedString("schedule.monday_short", comment: "Short Monday"),
+        NSLocalizedString("schedule.tuesday_short", comment: "Short Tuesday"),
+        NSLocalizedString("schedule.wednesday_short", comment: "Short Wednesday"),
+        NSLocalizedString("schedule.thursday_short", comment: "Short Thursday"),
+        NSLocalizedString("schedule.friday_short", comment: "Short Friday"),
+        NSLocalizedString("schedule.saturday_short", comment: "Short Saturday"),
+        NSLocalizedString("schedule.sunday_short", comment: "Short Sunday")
+    ]
     
     static func scheduleWeekday(from index: Int) -> Int {
         return index
@@ -18,7 +26,7 @@ enum ScheduleHelper {
         let weekdays = Set(schedules.map { $0.weekday })
         
         if weekdays.count == 7 {
-            return "Каждый день"
+            return NSLocalizedString("schedule.every_day_case", comment: "Every day case")
         }
         
         let sortedWeekdays = weekdays.sorted()
@@ -31,7 +39,7 @@ enum ScheduleHelper {
         guard !indices.isEmpty else { return "" }
         
         if indices.count == 7 {
-            return "Каждый день"
+            return NSLocalizedString("schedule.every_day_case", comment: "Every day case")
         }
         
         let sortedIndices = indices.sorted()
@@ -40,4 +48,3 @@ enum ScheduleHelper {
         return symbols.joined(separator: ", ")
     }
 }
-

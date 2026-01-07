@@ -68,7 +68,7 @@ final class TrackerFormView: UIView {
 
     private lazy var emojiTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Emoji"
+        label.text = NSLocalizedString("tracker_form_view.emoji_label", comment: "Emoji section title")
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = .ypBlackIOS
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -85,7 +85,7 @@ final class TrackerFormView: UIView {
 
     private lazy var colorTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цвет"
+        label.text = NSLocalizedString("tracker_form_view.color_label", comment: "Color section title")
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = .ypBlackIOS
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -227,7 +227,7 @@ final class TrackerFormView: UIView {
     
     private func updateDisplayedData() {
         let categoryConfig = TrackerOptionConfiguration(
-            title: "Категория",
+            title: NSLocalizedString("tracker_form_view.category", comment: "Category option title"),
             subtitle: formCategory,
             isFirst: true,
             isLast: false
@@ -236,7 +236,7 @@ final class TrackerFormView: UIView {
         
         let scheduleString = ScheduleHelper.formattedSchedule(from: formSchedule)
         let scheduleConfig = TrackerOptionConfiguration(
-            title: "Расписание",
+            title: NSLocalizedString("tracker_form_view.schedule", comment: "Schedule option title"),
             subtitle: scheduleString,
             isFirst: false,
             isLast: true

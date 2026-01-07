@@ -12,7 +12,7 @@ final class TrackerTitleInputView: UIView {
     // MARK: - Views
     private lazy var titleTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Введите название трекера"
+        textField.placeholder = NSLocalizedString("tracker_form_view.placeholder", comment: "Tracker title placeholder")
         textField.font = .systemFont(ofSize: 17, weight: .regular)
         textField.textColor = .ypBlackIOS
         textField.clearButtonMode = .whileEditing
@@ -35,7 +35,7 @@ final class TrackerTitleInputView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17, weight: .regular)
         label.textColor = .ypRedIOS
-        label.text = "Ограничение 38 символов"
+        label.text = NSLocalizedString("tracker_form_view.error_message", comment: "Tracker title too long error")
         label.textAlignment = .center
         label.isHidden = true
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -133,4 +133,3 @@ extension TrackerTitleInputView: UITextFieldDelegate {
         return true
     }
 }
-

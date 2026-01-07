@@ -15,8 +15,8 @@ final class OnboardingViewController: UIPageViewController {
         pageControl.numberOfPages = pages.count
         pageControl.currentPage = 0
         
-        pageControl.currentPageIndicatorTintColor = .ypBlackIOS
-        pageControl.pageIndicatorTintColor = .ypBlackIOS.withAlphaComponent(0.3)
+        pageControl.currentPageIndicatorTintColor = .ypUniversalBlackIOS
+        pageControl.pageIndicatorTintColor = .ypUniversalBlackIOS.withAlphaComponent(0.3)
         
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         return pageControl
@@ -24,10 +24,10 @@ final class OnboardingViewController: UIPageViewController {
     
     private lazy var onboardingButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Вот это технологии!", for: .normal)
-        button.setTitleColor(.ypWhiteIOS, for: .normal)
+        button.setTitle(NSLocalizedString("onboarding.button", comment: "Onboarding primary button"), for: .normal)
+        button.setTitleColor(.ypUniversalWhiteIOS, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-        button.backgroundColor = .ypBlackIOS
+        button.backgroundColor = .ypUniversalBlackIOS
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false

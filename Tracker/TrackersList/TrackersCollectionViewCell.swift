@@ -14,7 +14,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.textColor = .ypWhiteIOS
+        label.textColor = .ypUniversalWhiteIOS
         label.textAlignment = .left
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -33,7 +33,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    private lazy var quanityLabel: UILabel = {
+    private lazy var quantityLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.textColor = .ypBlackIOS
@@ -71,7 +71,7 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(colorView)
         colorView.addSubview(emojiLabel)
         colorView.addSubview(titleLabel)
-        contentView.addSubview(quanityLabel)
+        contentView.addSubview(quantityLabel)
         contentView.addSubview(plusButton)
         
         setupConstraints()
@@ -93,8 +93,8 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             emojiLabel.widthAnchor.constraint(equalToConstant: 24),
             emojiLabel.heightAnchor.constraint(equalToConstant: 24),
             
-            quanityLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 16),
-            quanityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            quantityLabel.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 16),
+            quantityLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
             
             plusButton.topAnchor.constraint(equalTo: colorView.bottomAnchor, constant: 8),
             plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
@@ -113,16 +113,16 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(with tracker: Tracker, isCompleted: Bool, quanity: Int) {
+    func configure(with tracker: Tracker, isCompleted: Bool, quantity: Int) {
         trackerId = tracker.id
         colorView.backgroundColor = tracker.color
         emojiLabel.text = tracker.emoji
         titleLabel.text = tracker.title
-        quanityLabel.text = getDayString(quanity)
-        
+        quantityLabel.text = String.localizedStringWithFormat(NSLocalizedString("days_count", comment: ""), quantity)
+
         let plusImage = UIImage(resource: .addHabitButton).withRenderingMode(.alwaysTemplate)
         let doneImage = UIImage(resource: .completeHabitButton).withRenderingMode(.alwaysTemplate)
-        
+
         if isCompleted {
             plusButton.setImage(doneImage, for: .normal)
             plusButton.backgroundColor = .ypWhiteIOS
@@ -133,24 +133,9 @@ final class TrackersCollectionViewCell: UICollectionViewCell {
             plusButton.tintColor = tracker.color
         }
     }
-    
-    private func getDayString(_ value: Int) -> String {
-        let mod10 = value % 10
-        let mod100 = value % 100
-        
-        let word: String = {
-            switch (mod100, mod10) {
-            case (11...14, _):
-                return "дней"
-            case (_, 1):
-                return "день"
-            case (_, 2...4):
-                return "дня"
-            default:
-                return "дней"
-            }
-        }()
-        
-        return "\(value) \(word)"
+
+    func getColorView() -> UIView {
+        return colorView
     }
+
 }

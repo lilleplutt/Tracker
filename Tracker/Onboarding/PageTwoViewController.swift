@@ -15,7 +15,7 @@ final class PageTwoViewController: UIViewController {
         label.text = "Даже если это\nне литры воды и йога"
         label.numberOfLines = 2
         label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
-        label.textColor = UIColor(resource: .ypBlackIOS)
+        label.textColor = UIColor(resource: .ypUniversalBlackIOS)
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

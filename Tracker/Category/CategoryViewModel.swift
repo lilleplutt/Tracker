@@ -29,7 +29,7 @@ final class CategoryViewModel {
 
     func addCategory(title: String) {
         guard !title.trimmingCharacters(in: .whitespaces).isEmpty else {
-            onError?("Название категории не может быть пустым")
+            onError?(NSLocalizedString("category.error_empty_name", comment: "Empty category name error"))
             return
         }
 
@@ -37,7 +37,8 @@ final class CategoryViewModel {
             _ = try categoryStore.addCategory(title: title)
             loadCategories()
         } catch {
-            onError?("Ошибка при добавлении категории: \(error.localizedDescription)")
+            let prefix = NSLocalizedString("category.error_add", comment: "Add category error prefix")
+            onError?("\(prefix): \(error.localizedDescription)")
         }
     }
 
@@ -50,7 +51,7 @@ final class CategoryViewModel {
     func updateCategory(at index: Int, newTitle: String) {
         guard index < categories.count,
               !newTitle.trimmingCharacters(in: .whitespaces).isEmpty else {
-            onError?("Название категории не может быть пустым")
+            onError?(NSLocalizedString("category.error_empty_name", comment: "Empty category name error"))
             return
         }
 
@@ -60,7 +61,8 @@ final class CategoryViewModel {
             try categoryStore.updateCategory(category, newTitle: newTitle)
             loadCategories()
         } catch {
-            onError?("Ошибка при обновлении категории: \(error.localizedDescription)")
+            let prefix = NSLocalizedString("category.error_update", comment: "Update category error prefix")
+            onError?("\(prefix): \(error.localizedDescription)")
         }
     }
 
@@ -71,7 +73,8 @@ final class CategoryViewModel {
             try categoryStore.deleteCategory(category)
             loadCategories()
         } catch {
-            onError?("Ошибка при удалении категории: \(error.localizedDescription)")
+            let prefix = NSLocalizedString("category.error_delete", comment: "Delete category error prefix")
+            onError?("\(prefix): \(error.localizedDescription)")
         }
     }
 
